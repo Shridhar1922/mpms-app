@@ -1,0 +1,49 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "src/assets/fonts/SF-Pro-Display-Semibold.ttf",
+      "sha1": "754ee374c9c73bfc56d2404c1192df6621e64d72"
+    },
+    {
+      "path": "src/assets/fonts/Cabin-Medium.ttf",
+      "sha1": "6f1f7eeaa7011348ae4bd8018ff3f5bc910e850c"
+    },
+    {
+      "path": "src/assets/fonts/SF-Pro-Display-Medium.ttf",
+      "sha1": "af0e4a4d7f6b6cad021daf4c78cc664512cd0d50"
+    },
+    {
+      "path": "src/assets/fonts/Poppins-Light.ttf",
+      "sha1": "e247a92158e112f8bf7b638c8d95381d66b00dbb"
+    },
+    {
+      "path": "src/assets/fonts/Poppins-Medium.ttf",
+      "sha1": "283f21b44efbdbf276ba802be2d949a36bbc4233"
+    },
+    {
+      "path": "src/assets/fonts/Cabin-SemiBold.ttf",
+      "sha1": "4c116f809c879da146ecd982898ca0296872b8c6"
+    },
+    {
+      "path": "src/assets/fonts/SF-Pro-Display-Regular.ttf",
+      "sha1": "879e38712cc5064b619c50929ca2299c8a02276d"
+    },
+    {
+      "path": "src/assets/fonts/Cabin-Regular.ttf",
+      "sha1": "88653633af9170e8625e72bc1d53ef3da29b741c"
+    },
+    {
+      "path": "src/assets/fonts/Poppins-Regular.ttf",
+      "sha1": "fdd3002e7d814ee47c1c1b8487c72c6bbb3a2d00"
+    },
+    {
+      "path": "src/assets/fonts/Poppins-Bold.ttf",
+      "sha1": "875cf0cecd647bcf22e79d633d868c1b1ec98dfa"
+    },
+    {
+      "path": "src/assets/fonts/Poppins-SemiBold.ttf",
+      "sha1": "8a4ace9392d06bcb7f8ea2f5169b07e4c383a90d"
+    }
+  ]
+}
