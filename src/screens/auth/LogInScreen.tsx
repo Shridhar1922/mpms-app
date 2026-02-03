@@ -8,15 +8,20 @@ import { FontFamily, FontSize } from '../../styles/typography';
 import Images from '../../constants/Images';
 import { scale, verticalScale } from '../../styles/responsiveStyles';
 import { Colors } from '../../styles/colors';
+import AppButton from '../../components/AppButton';
 
 export const LogInScreen = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [loading, setLoading] = useState(false);
 
   // Use the typed navigation hook
   const navigation = useNavigation();
 
   const handleLogin = (): void => {
+    setLoading(true);
+    // Simulate API Call
+    setTimeout(() => setLoading(false), 2000);
     Alert.alert('Error', 'Please enter email and password');
     // navigation.navigate(Screens.Main.USER_LIST);
     return;
@@ -51,11 +56,13 @@ export const LogInScreen = () => {
           />
         </View>
 
-        <View style={styles.buttonWrapper}>
-          <TouchableOpacity style={styles.button} onPress={handleLogin}>
-            <Text style={styles.buttonText}>Login</Text>
-          </TouchableOpacity>
-        </View>
+        <AppButton title="Login" onPress={handleLogin} loading={loading} />
+
+        <AppButton
+          title="Create Account"
+          variant="outline"
+          onPress={() => console.log('Navigate to Register')}
+        />
       </View>
     </View>
   );
@@ -81,23 +88,5 @@ const styles = StyleSheet.create({
 
   inputGroup: {
     marginBottom: verticalScale(10),
-  },
-
-  buttonWrapper: {
-    marginTop: verticalScale(10),
-  },
-
-  button: {
-    backgroundColor: '#0d6efd',
-    paddingVertical: verticalScale(15),
-    borderRadius: 6,
-    width: '100%',
-  },
-
-  buttonText: {
-    color: Colors.white,
-    textAlign: 'center',
-    fontFamily: FontFamily.FONT_FAMILY_PRIMARY_SEMI_BOLD,
-    fontSize: FontSize.S_12,
   },
 });

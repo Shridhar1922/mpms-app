@@ -7,6 +7,9 @@ export const Colors = {
   // Neutral Palette
   white: '#FFFFFF',
   black: '#000000',
+  blue: '#007AFF',
+  lightgray: '#cccccc',
+  darkgray: '#333333',
   grey: {
     100: '#F4F5F7',
     500: '#7A869A',

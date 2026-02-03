@@ -56,6 +56,9 @@ export const CommonStyles = StyleSheet.create({
     backgroundColor: Colors.grey[100],
     marginVertical: verticalScale(10),
   },
+  disabled: {
+    opacity: 0.5,
+  },
 });
 
 /**

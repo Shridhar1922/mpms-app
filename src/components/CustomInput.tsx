@@ -8,8 +8,9 @@ import {
   StyleProp,
   ViewStyle,
 } from 'react-native';
-
-// Extend the standard TextInputProps to keep all native functionality
+import { Colors } from '../styles/colors';
+import { FontFamily, FontSize } from '../styles/typography';
+import { moderateScale, verticalScale } from '../styles/responsiveStyles';
 interface CustomInputProps extends TextInputProps {
   label?: string;
   containerStyle?: StyleProp<ViewStyle>;
@@ -41,31 +42,33 @@ const CustomInput: React.FC<CustomInputProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 10,
+    marginVertical: verticalScale(10),
     width: '100%',
   },
   label: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 5,
-    color: '#333',
+    fontFamily: FontFamily.FONT_FAMILY_PRIMARY_LIGHT,
+    fontSize: FontSize.S_10,
+    marginBottom: moderateScale(5),
+    color: Colors.darkgray,
   },
   input: {
-    height: 50,
+    height: verticalScale(50),
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: Colors.lightgray,
     borderRadius: 8,
-    paddingHorizontal: 15,
-    fontSize: 16,
-    backgroundColor: '#fff',
+    paddingHorizontal: moderateScale(15),
+    fontFamily: FontFamily.FONT_FAMILY_PRIMARY_REGULAR,
+    fontSize: FontSize.S_10,
+    backgroundColor: Colors.white,
   },
   inputError: {
-    borderColor: '#ff4444',
+    borderColor: Colors.error,
   },
   errorText: {
-    color: '#ff4444',
-    fontSize: 12,
-    marginTop: 4,
+    color: Colors.error,
+    fontFamily: FontFamily.FONT_FAMILY_PRIMARY_REGULAR,
+    fontSize: FontSize.XS_8,
+    marginTop: moderateScale(5),
   },
 });
 
