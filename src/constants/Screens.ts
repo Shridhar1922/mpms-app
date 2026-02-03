@@ -1,6 +1,9 @@
-import SplashScreen from 'screens/SplashScreen';
+import SplashScreen from 'screens/splash/SplashScreen';
 
 export const Screens = {
+  Auth: {
+    LogIn: 'LogInScreen',
+  },
   Main: {
     Splash: 'SplashScreen',
     HOME: 'HomeScreen',

@@ -2,6 +2,7 @@ import { Screens } from './Screens';
 
 export type MainStackParamList = {
   [Screens.Main.Splash]: undefined;
+  [Screens.Auth.LogIn]: undefined;
   [Screens.Main.HOME]: undefined;
   [Screens.Main.USER_LIST]: undefined;
 };

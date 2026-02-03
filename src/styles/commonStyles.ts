@@ -37,6 +37,7 @@ export const CommonStyles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: horizontalScale(16), // Scales with width
     backgroundColor: Colors.white,
+    width: '100%',
   },
 
   // Shadow helper (iOS/Android)

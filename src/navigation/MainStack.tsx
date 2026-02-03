@@ -1,9 +1,9 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
-import { HomeScreen } from '../screens/HomeScreen';
+import { LogInScreen } from '../screens/auth/LogInScreen';
 import { UserList } from '../screens/UserList';
 import { Screens } from '../constants/Screens';
-import SplashScreen from '../screens/SplashScreen';
+import SplashScreen from '../screens/splash/SplashScreen';
 
 const Stack = createStackNavigator();
 
@@ -17,7 +17,7 @@ const MainStack = () => (
       />
       <Stack.Screen
         name={Screens.Main.HOME}
-        component={HomeScreen}
+        component={LogInScreen}
         options={{ headerShown: false }}
       />
       <Stack.Screen name={Screens.Main.USER_LIST} component={UserList} />
