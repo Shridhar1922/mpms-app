@@ -1,18 +1,19 @@
 import { useNavigation } from '@react-navigation/native';
 import { Screens } from '../constants/Screens';
-import React, { useEffect } from 'react';
-import { View, Image, StyleSheet, ActivityIndicator } from 'react-native';
+import { useEffect } from 'react';
+import { View, Image, StyleSheet } from 'react-native';
+import { CommonStyles } from '../styles/commonStyles';
 
 const SplashScreen = () => {
   const navigation = useNavigation();
   useEffect(() => {
     setTimeout(() => {
-      navigation.navigate(Screens.Main.HOME); // or Login
+      navigation.navigate(Screens.Main.HOME);
     }, 2500);
   }, []);
 
   return (
-    <View style={styles.container}>
+    <View style={[CommonStyles.container, CommonStyles.center]}>
       <Image source={require('../assets/logo.png')} style={styles.logo} resizeMode="contain" />
     </View>
   );
@@ -21,15 +22,8 @@ const SplashScreen = () => {
 export default SplashScreen;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   logo: {
-    width: 180,
-    height: 180,
-    marginBottom: 30,
+    width: '30%',
+    height: '30%',
   },
 });
