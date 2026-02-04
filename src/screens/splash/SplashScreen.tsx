@@ -9,10 +9,12 @@ import { scale, verticalScale } from '../../styles/responsiveStyles';
 const SplashScreen = () => {
   const navigation = useNavigation();
   useEffect(() => {
-    setTimeout(() => {
-      navigation.navigate(Screens.Main.HOME);
+    const timer = setTimeout(() => {
+      navigation.navigate(Screens.Auth.LOGIN);
     }, 2500);
-  }, []);
+
+    return () => clearTimeout(timer);
+  }, [navigation]);
 
   return (
     <View style={[CommonStyles.container, CommonStyles.center]}>

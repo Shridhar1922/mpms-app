@@ -1,12 +1,18 @@
-import SplashScreen from 'screens/splash/SplashScreen';
+import { ServicesScreen } from 'screens/employer/services/ServicesScreen';
 
 export const Screens = {
   Auth: {
-    LogIn: 'LogInScreen',
+    LOGIN: 'LogInScreen',
   },
+
   Main: {
-    Splash: 'SplashScreen',
+    TABS: 'MainApp',
+    SPLASH: 'SplashScreen',
     HOME: 'HomeScreen',
     USER_LIST: 'UserListScreen',
+    DASHBOARD: 'DashboardScreen',
+    PROFILE: 'ProfileScreen',
+    SERVICES: 'ServicesScreen',
+    SETTINGS: 'SettingsScreen',
   },
 } as const;

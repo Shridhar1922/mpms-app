@@ -6,10 +6,13 @@ export const Colors = {
 
   // Neutral Palette
   white: '#FFFFFF',
+  offwhite: '#f2f2f2',
   black: '#000000',
   blue: '#007AFF',
   lightgray: '#cccccc',
   darkgray: '#333333',
+  dimgray: '#444444',
+  gainsboro: '#dddddd',
   grey: {
     100: '#F4F5F7',
     500: '#7A869A',

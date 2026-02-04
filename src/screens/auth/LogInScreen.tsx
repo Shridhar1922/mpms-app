@@ -1,14 +1,13 @@
 import { useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, Image, StyleSheet, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Screens } from '../../constants/Screens';
 import CustomInput from '../../components/CustomInput';
 import { CommonStyles, Spacing } from '../../styles/commonStyles';
 import { FontFamily, FontSize } from '../../styles/typography';
 import Images from '../../constants/Images';
 import { scale, verticalScale } from '../../styles/responsiveStyles';
-import { Colors } from '../../styles/colors';
 import AppButton from '../../components/AppButton';
+import { Screens } from '../../constants/Screens';
 
 export const LogInScreen = () => {
   const [email, setEmail] = useState<string>('');
@@ -23,7 +22,7 @@ export const LogInScreen = () => {
     // Simulate API Call
     setTimeout(() => setLoading(false), 2000);
     Alert.alert('Error', 'Please enter email and password');
-    // navigation.navigate(Screens.Main.USER_LIST);
+    navigation.navigate(Screens.Main.TABS, {screen: Screens.Main.DASHBOARD});
     return;
   };
 
