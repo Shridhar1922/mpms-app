@@ -1,24 +1,35 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { BASE_URL, API_ENDPOINT_LOGIN } from '../apiTypes';
 
-// Define a service using a base URL and expected endpoints
 export const authApi = createApi({
   reducerPath: 'authApi',
-  // Switch to JSONPlaceholder for better stability during development
   baseQuery: fetchBaseQuery({
-    baseUrl: 'https://jsonplaceholder.typicode.com/',
+    baseUrl: BASE_URL,
     prepareHeaders: (headers) => {
-      // Standard headers to look more like a browser request
       headers.set('Content-Type', 'application/json');
+      // iOS often requires this to explicitly expect JSON back
+      headers.set('Accept', 'application/json');
       return headers;
     },
   }),
   endpoints: (builder) => ({
-    // Testing with 'posts' instead of 'users' for JSONPlaceholder
-    getUsers: builder.query({
-      query: () => 'posts',
+    login: builder.mutation({
+      query: (payload) => ({
+        url: API_ENDPOINT_LOGIN,
+        method: 'POST',
+        body: payload,
+      }),
+      // Help debug iOS-specific response issues
+      transformResponse: (response: any) => {
+        return response;
+      },
+      // Log the error specifically for iOS debugging
+      transformErrorResponse: (response) => {
+        console.log('iOS Network Error Detail:', response);
+        return response;
+      },
     }),
   }),
 });
 
-// Export hooks for usage in functional components
-export const { useGetUsersQuery } = authApi;
+export const { useLoginMutation } = authApi;

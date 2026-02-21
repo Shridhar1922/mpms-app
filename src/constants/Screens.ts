@@ -1,5 +1,3 @@
-import { ServicesScreen } from 'screens/employer/services/ServicesScreen';
-
 export const Screens = {
   Auth: {
     LOGIN: 'LogInScreen',

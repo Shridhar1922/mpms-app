@@ -35,7 +35,7 @@ export const CommonStyles = StyleSheet.create({
   // Common Containers (Using your responsive logic)
   container: {
     flex: 1,
-    paddingHorizontal: horizontalScale(16), // Scales with width
+    // paddingHorizontal: horizontalScale(16), // Scales with width
     backgroundColor: Colors.white,
     width: '100%',
   },

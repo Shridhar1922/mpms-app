@@ -1,33 +1,51 @@
 import { useState } from 'react';
-import { View, Text, Image, StyleSheet, Alert } from 'react-native';
+import { View, Text, Image, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import CustomInput from '../../components/CustomInput';
 import { CommonStyles, Spacing } from '../../styles/commonStyles';
 import { FontFamily, FontSize } from '../../styles/typography';
 import Images from '../../constants/Images';
-import { scale, verticalScale } from '../../styles/responsiveStyles';
+import { horizontalScale, scale, verticalScale } from '../../styles/responsiveStyles';
 import AppButton from '../../components/AppButton';
 import { Screens } from '../../constants/Screens';
+// import { useLoginMutation } from '../../redux/api/auth.api';
 
 export const LogInScreen = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [loading, setLoading] = useState(false);
+  // const [loginMutation, { isLoading, isSuccess, isError, data }] = useLoginMutation();
 
   // Use the typed navigation hook
   const navigation = useNavigation();
 
-  const handleLogin = (): void => {
-    setLoading(true);
-    // Simulate API Call
-    setTimeout(() => setLoading(false), 2000);
-    Alert.alert('Error', 'Please enter email and password');
-    navigation.navigate(Screens.Main.TABS, {screen: Screens.Main.DASHBOARD});
-    return;
+  const handleLogin = async () => {
+    const payload = { email: email, password: password };
+    navigation.navigate(Screens.Main.TABS, { screen: Screens.Main.DASHBOARD });
+    // try {
+    //   // setLoading(true);
+    //   const response = await loginMutation(payload);
+
+    //   console.log('response', response);
+
+    //   if (response?.data?.success) {
+    //     setLoading(false);
+    //     Alert.alert('Login successfull');
+    //   }
+    // } catch (e: any) {
+    //   setLoading(false);
+    //   Alert.alert('error: ', e);
+    // }
   };
 
   return (
-    <View style={[CommonStyles.container, CommonStyles.center]}>
+    <View
+      style={[
+        CommonStyles.container,
+        CommonStyles.center,
+        { paddingHorizontal: horizontalScale(16) },
+      ]}
+    >
       <View style={[Spacing.mV(20)]}>
         <Image source={Images.logo} style={[styles.logo]} resizeMode="contain" />
       </View>

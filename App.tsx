@@ -16,13 +16,7 @@ function App() {
   const isDarkMode = useColorScheme() === 'dark';
 
   useEffect(() => {
-    const init = async () => {
-      // any async work like auth, storage, etc.
-    };
-
-    init().finally(() => {
-      RNBootSplash.hide();
-    });
+    RNBootSplash.hide();
   }, []);
   return (
     <Provider store={store}>
