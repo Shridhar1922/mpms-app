@@ -2,16 +2,14 @@ import React from 'react';
 import {
   TouchableOpacity,
   Text,
-  StyleSheet,
   ActivityIndicator,
   StyleProp,
   ViewStyle,
   TextStyle,
 } from 'react-native';
-import { moderateScale, verticalScale } from '../styles/responsiveStyles';
-import { FontFamily, FontSize } from '../styles/typography';
-import { Colors } from '../styles/colors';
-import { CommonStyles } from '../styles/commonStyles';
+import { Colors } from '../../styles/colors';
+import { CommonStyles } from '../../styles/commonStyles';
+import { styles } from './AppButton.styles';
 
 interface ButtonProps {
   title: string;
@@ -58,32 +56,5 @@ const AppButton: React.FC<ButtonProps> = ({
     </TouchableOpacity>
   );
 };
-
-const styles = StyleSheet.create({
-  button: {
-    height: verticalScale(50),
-    borderRadius: 8,
-    marginVertical: verticalScale(10),
-    paddingHorizontal: moderateScale(20),
-  },
-  primaryButton: {
-    backgroundColor: Colors.blue,
-  },
-  outlineButton: {
-    backgroundColor: Colors.transparent,
-    borderWidth: 1,
-    borderColor: Colors.blue,
-  },
-  text: {
-    fontFamily: FontFamily.FONT_FAMILY_PRIMARY_SEMI_BOLD,
-    fontSize: FontSize.S_12,
-  },
-  primaryText: {
-    color: Colors.white,
-  },
-  outlineText: {
-    color: Colors.blue,
-  },
-});
 
 export default AppButton;

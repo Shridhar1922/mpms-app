@@ -1,40 +1,41 @@
 import { useState } from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import CustomInput from '../../components/CustomInput';
+import CustomInput from '../../components/CustomeInput/CustomInput';
 import { CommonStyles, Spacing } from '../../styles/commonStyles';
-import { FontFamily, FontSize } from '../../styles/typography';
 import Images from '../../constants/Images';
-import { horizontalScale, scale, verticalScale } from '../../styles/responsiveStyles';
-import AppButton from '../../components/AppButton';
+import { horizontalScale } from '../../styles/responsiveStyles';
+import AppButton from '../../components/AppButton/AppButton';
 import { Screens } from '../../constants/Screens';
-// import { useLoginMutation } from '../../redux/api/auth.api';
+import { styles } from './LogInScreen.styles';
+import { useLoginMutation } from '../../redux/api/auth.api';
+import { useToast } from '../../components/Toast/ToastContext/ToastContext';
 
 export const LogInScreen = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [loading, setLoading] = useState(false);
-  // const [loginMutation, { isLoading, isSuccess, isError, data }] = useLoginMutation();
+  const [loginMutation, { isLoading, isSuccess, isError, data }] = useLoginMutation();
+  const { showToast } = useToast();
 
   // Use the typed navigation hook
   const navigation = useNavigation();
 
   const handleLogin = async () => {
     const payload = { email: email, password: password };
+    showToast('Log in successfully!', 'info');
     navigation.navigate(Screens.Main.TABS, { screen: Screens.Main.DASHBOARD });
     // try {
-    //   // setLoading(true);
+    //   setLoading(true);
     //   const response = await loginMutation(payload);
 
     //   console.log('response', response);
 
     //   if (response?.data?.success) {
     //     setLoading(false);
-    //     Alert.alert('Login successfull');
     //   }
     // } catch (e: any) {
     //   setLoading(false);
-    //   Alert.alert('error: ', e);
     // }
   };
 
@@ -84,26 +85,3 @@ export const LogInScreen = () => {
     </View>
   );
 };
-const styles = StyleSheet.create({
-  logo: {
-    width: scale(100),
-    height: verticalScale(100),
-  },
-  title: {
-    fontFamily: FontFamily.FONT_FAMILY_PRIMARY_BOLD,
-    fontSize: FontSize.REG_16,
-  },
-  subtitle: {
-    fontFamily: FontFamily.FONT_FAMILY_PRIMARY_REGULAR,
-    fontSize: FontSize.XS_8,
-  },
-
-  form: {
-    marginVertical: verticalScale(20),
-    width: '100%',
-  },
-
-  inputGroup: {
-    marginBottom: verticalScale(10),
-  },
-});
