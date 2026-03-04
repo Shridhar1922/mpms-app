@@ -4,8 +4,7 @@ import { LogInScreen } from '../screens/auth/LogInScreen';
 // import { UserList } from '../screens/UserList';
 import { Screens } from '../constants/Screens';
 import SplashScreen from '../screens/splash/SplashScreen';
-import BottomTabNavigation from './bottom-tabs/BottomTabNavigation';
-import { DashboardScreen } from '../screens/employer/dashboard/DashboardScreen';
+import { AppDrawerNavigation } from './AppDrawerNavigation';
 
 const Stack = createStackNavigator();
 
@@ -23,7 +22,7 @@ const MainStack = () => (
         options={{ headerShown: false }}
       />
       {/* <Stack.Screen name={Screens.Main.DASHBOARD} component={DashboardScreen} /> */}
-      <Stack.Screen name={Screens.Main.TABS} component={BottomTabNavigation} />
+      <Stack.Screen name={Screens.Main.TABS} component={AppDrawerNavigation} />
     </Stack.Navigator>
   </NavigationContainer>
 );

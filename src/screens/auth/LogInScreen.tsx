@@ -1,33 +1,94 @@
 import { useState } from 'react';
-import { View, Text, Image, StyleSheet, Alert } from 'react-native';
+import { View, Text, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import CustomInput from '../../components/CustomInput';
+import CustomInput from '../../components/CustomeInput/CustomInput';
 import { CommonStyles, Spacing } from '../../styles/commonStyles';
-import { FontFamily, FontSize } from '../../styles/typography';
 import Images from '../../constants/Images';
-import { scale, verticalScale } from '../../styles/responsiveStyles';
-import AppButton from '../../components/AppButton';
+import { horizontalScale } from '../../styles/responsiveStyles';
+import AppButton from '../../components/AppButton/AppButton';
 import { Screens } from '../../constants/Screens';
+import { styles } from './LogInScreen.styles';
+import { useLoginMutation } from '../../redux/api/auth.api';
+import { useToast } from '../../components/Toast/ToastContext/ToastContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { USER_INFO } from '../../constants/StaticData';
 
 export const LogInScreen = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [loading, setLoading] = useState(false);
+  const [loginMutation, { isLoading, isSuccess, isError, data }] = useLoginMutation();
+  const { showToast } = useToast();
 
   // Use the typed navigation hook
   const navigation = useNavigation();
 
-  const handleLogin = (): void => {
-    setLoading(true);
-    // Simulate API Call
-    setTimeout(() => setLoading(false), 2000);
-    Alert.alert('Error', 'Please enter email and password');
-    navigation.navigate(Screens.Main.TABS, {screen: Screens.Main.DASHBOARD});
-    return;
+  const validateForm = (): boolean => {
+    // Check email
+    if (!email || email.trim().length === 0) {
+      showToast('Please enter your email', 'error');
+      return false;
+    }
+
+    if (!email.includes('@')) {
+      showToast('Please enter a valid email', 'error');
+      return false;
+    }
+
+    // Check password
+    if (!password || password.trim().length === 0) {
+      showToast('Please enter your password', 'error');
+      return false;
+    }
+
+    if (password.length < 6) {
+      showToast('Password must be at least 6 characters', 'error');
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleLogin = async () => {
+    // Validate form before API call
+    if (!validateForm()) {
+      return;
+    }
+
+    const payload = { email: email.trim(), password: password };
+
+    // navigation.navigate(Screens.Main.TABS, { screen: Screens.Main.DASHBOARD });
+    try {
+      setLoading(true);
+      const response = await loginMutation(payload).unwrap();
+
+      console.log('response', response);
+
+      if (response?.success) {
+        showToast('Log in successfully!', 'success');
+        await AsyncStorage.setItem(USER_INFO.REFRESH, response.data.refreshToken);
+        await AsyncStorage.setItem(USER_INFO.TOKEN, response.data.accessToken);
+        await AsyncStorage.setItem(USER_INFO.USER, JSON.stringify(response.data.user));
+        setLoading(false);
+        navigation.navigate(Screens.Main.TABS, { screen: Screens.Main.DASHBOARD });
+      }
+    } catch (e: any) {
+      setLoading(false);
+      console.log('====================================');
+      console.log('e', e);
+      console.log('====================================');
+      showToast(e.error, 'error');
+    }
   };
 
   return (
-    <View style={[CommonStyles.container, CommonStyles.center]}>
+    <View
+      style={[
+        CommonStyles.container,
+        CommonStyles.center,
+        { paddingHorizontal: horizontalScale(16) },
+      ]}
+    >
       <View style={[Spacing.mV(20)]}>
         <Image source={Images.logo} style={[styles.logo]} resizeMode="contain" />
       </View>
@@ -66,26 +127,3 @@ export const LogInScreen = () => {
     </View>
   );
 };
-const styles = StyleSheet.create({
-  logo: {
-    width: scale(100),
-    height: verticalScale(100),
-  },
-  title: {
-    fontFamily: FontFamily.FONT_FAMILY_PRIMARY_BOLD,
-    fontSize: FontSize.REG_16,
-  },
-  subtitle: {
-    fontFamily: FontFamily.FONT_FAMILY_PRIMARY_REGULAR,
-    fontSize: FontSize.XS_8,
-  },
-
-  form: {
-    marginVertical: verticalScale(20),
-    width: '100%',
-  },
-
-  inputGroup: {
-    marginBottom: verticalScale(10),
-  },
-});

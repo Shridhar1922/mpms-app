@@ -1,24 +1,35 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { BASE_URL, API_ENDPOINT_LOGIN, API_ENDPOINT_REFRESH_TOKEN } from '../apiTypes';
 
-// Define a service using a base URL and expected endpoints
 export const authApi = createApi({
   reducerPath: 'authApi',
-  // Switch to JSONPlaceholder for better stability during development
   baseQuery: fetchBaseQuery({
-    baseUrl: 'https://jsonplaceholder.typicode.com/',
-    prepareHeaders: (headers) => {
-      // Standard headers to look more like a browser request
+    baseUrl: BASE_URL,
+    prepareHeaders: async (headers, { endpoint }) => {
+      headers.set('Accept', 'application/json');
       headers.set('Content-Type', 'application/json');
+
       return headers;
     },
   }),
   endpoints: (builder) => ({
-    // Testing with 'posts' instead of 'users' for JSONPlaceholder
-    getUsers: builder.query({
-      query: () => 'posts',
+    login: builder.mutation({
+      query: (payload) => {
+        return {
+          url: API_ENDPOINT_LOGIN,
+          method: 'POST',
+          body: payload,
+        };
+      },
+    }),
+    refreshToken: builder.mutation({
+      query: (payload) => ({
+        url: API_ENDPOINT_REFRESH_TOKEN,
+        method: 'POST',
+        body: payload,
+      }),
     }),
   }),
 });
 
-// Export hooks for usage in functional components
-export const { useGetUsersQuery } = authApi;
+export const { useLoginMutation, useRefreshTokenMutation } = authApi;
