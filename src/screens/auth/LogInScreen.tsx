@@ -10,6 +10,8 @@ import { Screens } from '../../constants/Screens';
 import { styles } from './LogInScreen.styles';
 import { useLoginMutation } from '../../redux/api/auth.api';
 import { useToast } from '../../components/Toast/ToastContext/ToastContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { USER_INFO } from '../../constants/StaticData';
 
 export const LogInScreen = () => {
   const [email, setEmail] = useState<string>('');
@@ -21,22 +23,62 @@ export const LogInScreen = () => {
   // Use the typed navigation hook
   const navigation = useNavigation();
 
+  const validateForm = (): boolean => {
+    // Check email
+    if (!email || email.trim().length === 0) {
+      showToast('Please enter your email', 'error');
+      return false;
+    }
+
+    if (!email.includes('@')) {
+      showToast('Please enter a valid email', 'error');
+      return false;
+    }
+
+    // Check password
+    if (!password || password.trim().length === 0) {
+      showToast('Please enter your password', 'error');
+      return false;
+    }
+
+    if (password.length < 6) {
+      showToast('Password must be at least 6 characters', 'error');
+      return false;
+    }
+
+    return true;
+  };
+
   const handleLogin = async () => {
-    const payload = { email: email, password: password };
-    showToast('Log in successfully!', 'info');
-    navigation.navigate(Screens.Main.TABS, { screen: Screens.Main.DASHBOARD });
-    // try {
-    //   setLoading(true);
-    //   const response = await loginMutation(payload);
+    // Validate form before API call
+    if (!validateForm()) {
+      return;
+    }
 
-    //   console.log('response', response);
+    const payload = { email: email.trim(), password: password };
 
-    //   if (response?.data?.success) {
-    //     setLoading(false);
-    //   }
-    // } catch (e: any) {
-    //   setLoading(false);
-    // }
+    // navigation.navigate(Screens.Main.TABS, { screen: Screens.Main.DASHBOARD });
+    try {
+      setLoading(true);
+      const response = await loginMutation(payload).unwrap();
+
+      console.log('response', response);
+
+      if (response?.success) {
+        showToast('Log in successfully!', 'success');
+        await AsyncStorage.setItem(USER_INFO.REFRESH, response.data.refreshToken);
+        await AsyncStorage.setItem(USER_INFO.TOKEN, response.data.accessToken);
+        await AsyncStorage.setItem(USER_INFO.USER, JSON.stringify(response.data.user));
+        setLoading(false);
+        navigation.navigate(Screens.Main.TABS, { screen: Screens.Main.DASHBOARD });
+      }
+    } catch (e: any) {
+      setLoading(false);
+      console.log('====================================');
+      console.log('e', e);
+      console.log('====================================');
+      showToast(e.error, 'error');
+    }
   };
 
   return (
