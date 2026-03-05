@@ -5,7 +5,6 @@ import { CommonStyles } from '../../../styles/commonStyles';
 import { CommonHeader } from '../../../components/CommonHeader/CommonHeader';
 import {
   CheckInOutCard,
-  Calendar,
   AnnouncementsList,
   HolidaysList,
 } from '../../../components/DashboardComponents';
@@ -14,17 +13,64 @@ import {
   checkOut,
   setAnnouncements,
   setHolidays,
+  addCheckInOutRecord,
   type CheckInOutRecord,
   type Announcement,
   type Holiday,
 } from '../../../redux/slices/dashboardSlice';
 import { RootState } from '../../../redux/store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { USER_INFO } from '../../../constants/StaticData';
+
+export type Permission = {
+  id?: string;
+  name?: string;
+};
+
+export type Role = {
+  id: string;
+  name: string;
+  label: string | null;
+  permissions: Permission[];
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+};
+
+export type UserType = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  dateOfBirth: string | null;
+  roles: Role[];
+  employer: unknown | null;
+};
 
 export const DashboardScreen = () => {
   const dispatch = useDispatch();
   const { checkInOutRecords, currentDayCheckedIn, currentDayCheckedOut, announcements, holidays } =
     useSelector((state: RootState) => state.dashboard);
+  const [user, setUser] = useState<UserType | null>(null);
 
+  // load user from AsyncStorage
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const json = await AsyncStorage.getItem(USER_INFO.USER);
+        if (json) {
+          setUser(JSON.parse(json));
+        }
+      } catch (e) {
+        console.warn('Failed to load user from storage', e);
+      }
+    };
+    loadUser();
+  }, []);
+  console.log('user.....', user);
   // Get today's record
   const today = new Date().toISOString().split('T')[0];
   const todayRecord = checkInOutRecords.find((record) => record.date === today);
@@ -103,8 +149,7 @@ export const DashboardScreen = () => {
 
       // Add mock records to Redux
       mockRecords.forEach((record) => {
-        // This approach works by using the addCheckInOutRecord action
-        // We need to set them through state initialization
+        dispatch(addCheckInOutRecord(record));
       });
     };
 
@@ -144,12 +189,23 @@ export const DashboardScreen = () => {
     Alert.alert('Success', `Checked out at ${time}`, [{ text: 'OK' }]);
   };
 
+  const nowDate = new Date();
+  const weekday = nowDate.toLocaleDateString('en-US', { weekday: 'long' });
+  const dd = String(nowDate.getDate()).padStart(2, '0');
+  const mm = String(nowDate.getMonth() + 1).padStart(2, '0');
+  const yyyy = nowDate.getFullYear();
+  const formattedDate = `${weekday} - ${dd}/${mm}/${yyyy}`;
+
   return (
     <View style={[CommonStyles.container]}>
       <CommonHeader title="Dashboard" />
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Check In / Check Out Card */}
         <CheckInOutCard
+          userName={user ? user?.name : ''}
+          currentDateStr={formattedDate}
+          shiftName="General"
+          shiftTime="10:00 TO 19:00"
           currentDayCheckedIn={currentDayCheckedIn}
           currentDayCheckedOut={currentDayCheckedOut}
           currentCheckInTime={todayRecord?.checkInTime}
@@ -158,24 +214,9 @@ export const DashboardScreen = () => {
           onCheckOut={handleCheckOut}
         />
 
-        {/* Calendar with Highlights */}
-        <Calendar
-          checkInOutRecords={checkInOutRecords}
-          onDateSelect={(date) => {
-            const record = checkInOutRecords.find((r) => r.date === date);
-            if (record) {
-              Alert.alert(
-                'Attendance Details',
-                `Date: ${date}\nCheck In: ${record.checkInTime || 'N/A'}\nCheck Out: ${record.checkOutTime || 'N/A'}`
-              );
-            }
-          }}
-        />
-
         {/* Announcements List */}
         <AnnouncementsList announcements={announcements} />
-
-        {/* Holidays List */}
+        {/* Upcoming Holidays */}
         <HolidaysList holidays={holidays} />
       </ScrollView>
     </View>

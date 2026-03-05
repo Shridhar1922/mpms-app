@@ -17,7 +17,7 @@ export const LogInScreen = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [loading, setLoading] = useState(false);
-  const [loginMutation, { isLoading, isSuccess, isError, data }] = useLoginMutation();
+  const [loginMutation] = useLoginMutation();
   const { showToast } = useToast();
 
   // Use the typed navigation hook

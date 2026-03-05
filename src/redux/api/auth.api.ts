@@ -5,7 +5,7 @@ export const authApi = createApi({
   reducerPath: 'authApi',
   baseQuery: fetchBaseQuery({
     baseUrl: BASE_URL,
-    prepareHeaders: async (headers, { endpoint }) => {
+    prepareHeaders: async (headers) => {
       headers.set('Accept', 'application/json');
       headers.set('Content-Type', 'application/json');
 

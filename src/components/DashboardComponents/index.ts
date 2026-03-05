@@ -1,4 +1,3 @@
-export { CheckInOutCard } from './CheckInOutCard';
-export { Calendar } from './Calendar';
-export { AnnouncementsList } from './AnnouncementsList';
-export { HolidaysList } from './HolidaysList';
+export { AnnouncementsList } from './AnnouncementList/AnnouncementsList';
+export { HolidaysList } from './HolidaysList/HolidaysList';
+export { CheckInOutCard } from './CheckInOutCard/CheckInOutCard';
