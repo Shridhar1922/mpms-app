@@ -1,224 +1,70 @@
-import { View, ScrollView, Alert } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { View, Text, ScrollView, StyleSheet } from 'react-native';
+
 import { CommonStyles } from '../../../styles/commonStyles';
-import { CommonHeader } from '../../../components/CommonHeader/CommonHeader';
+import { CommonHeader } from '../../../components/commonHeader/CommonHeader';
 import {
-  CheckInOutCard,
-  AnnouncementsList,
-  HolidaysList,
-} from '../../../components/DashboardComponents';
-import {
-  checkIn,
-  checkOut,
-  setAnnouncements,
-  setHolidays,
-  addCheckInOutRecord,
-  type CheckInOutRecord,
-  type Announcement,
-  type Holiday,
-} from '../../../redux/slices/dashboardSlice';
-import { RootState } from '../../../redux/store';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { USER_INFO } from '../../../constants/StaticData';
-
-export type Permission = {
-  id?: string;
-  name?: string;
-};
-
-export type Role = {
-  id: string;
-  name: string;
-  label: string | null;
-  permissions: Permission[];
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: string | null;
-};
-
-export type UserType = {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: string | null;
-  dateOfBirth: string | null;
-  roles: Role[];
-  employer: unknown | null;
-};
+  StatsCard,
+  NotificationList,
+  NotificationItemType,
+} from '../../../components/dashboardComponents';
+import { moderateScale, scale, verticalScale } from '../../../styles/responsiveStyles';
 
 export const DashboardScreen = () => {
-  const dispatch = useDispatch();
-  const { checkInOutRecords, currentDayCheckedIn, currentDayCheckedOut, announcements, holidays } =
-    useSelector((state: RootState) => state.dashboard);
-  const [user, setUser] = useState<UserType | null>(null);
+  const [stats, setStats] = useState({ total: 0, present: 0, absent: 0 });
+  const [notifications, setNotifications] = useState<NotificationItemType[]>([]);
 
-  // load user from AsyncStorage
   useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const json = await AsyncStorage.getItem(USER_INFO.USER);
-        if (json) {
-          setUser(JSON.parse(json));
-        }
-      } catch (e) {
-        console.warn('Failed to load user from storage', e);
-      }
-    };
-    loadUser();
+    // mock data for cards
+    setStats({ total: 120, present: 98, absent: 22 });
+
+    // mock notifications
+    setNotifications([
+      {
+        id: '1',
+        title: 'Payroll Processed',
+        message: 'March salaries have been disbursed to all employees.',
+        date: '2026-03-04',
+      },
+      {
+        id: '2',
+        title: 'System Update',
+        message: 'Scheduling module updated to version 2.1 with bug fixes.',
+        date: '2026-03-03',
+      },
+      {
+        id: '3',
+        title: 'New Hire Orientation',
+        message: 'Orientation for new employees scheduled on 10th March.',
+        date: '2026-03-02',
+      },
+    ]);
   }, []);
-  console.log('user.....', user);
-  // Get today's record
-  const today = new Date().toISOString().split('T')[0];
-  const todayRecord = checkInOutRecords.find((record) => record.date === today);
-
-  // Load mock data on component mount
-  useEffect(() => {
-    const loadMockData = () => {
-      // Mock announcements
-      const mockAnnouncements: Announcement[] = [
-        {
-          id: '1',
-          title: 'Office Closure',
-          content: 'Office will be closed on March 15, 2026 due to maintenance.',
-          date: '2026-03-04',
-          priority: 'high',
-        },
-        {
-          id: '2',
-          title: 'Team Meeting',
-          content: 'All-hands meeting scheduled for March 10, 2026 at 10 AM.',
-          date: '2026-03-03',
-          priority: 'medium',
-        },
-        {
-          id: '3',
-          title: 'New Benefits Package',
-          content: 'Check out the new health and wellness benefits available to all employees.',
-          date: '2026-02-28',
-          priority: 'low',
-        },
-      ];
-
-      // Mock holidays
-      const mockHolidays: Holiday[] = [
-        {
-          id: '1',
-          name: 'Holi',
-          date: '2026-03-14',
-          description: 'Festival of Colors - Regional Holiday',
-        },
-        {
-          id: '2',
-          name: 'Good Friday',
-          date: '2026-04-10',
-          description: 'National Holiday',
-        },
-        {
-          id: '3',
-          name: 'Easter Monday',
-          date: '2026-04-13',
-          description: 'Regional Holiday',
-        },
-        {
-          id: '4',
-          name: 'Eid ul-Fitr',
-          date: '2026-04-02',
-          description: 'Islamic Holiday',
-        },
-        {
-          id: '5',
-          name: 'Labour Day',
-          date: '2026-05-01',
-          description: 'National Holiday',
-        },
-      ];
-
-      // Mock check-in/check-out records for past days
-      const mockRecords: CheckInOutRecord[] = [
-        { date: '2026-02-28', checkInTime: '09:15', checkOutTime: '18:30', status: 'checked-out' },
-        { date: '2026-03-01', checkInTime: '09:00', checkOutTime: '18:15', status: 'checked-out' },
-        { date: '2026-03-02', checkInTime: '09:30', checkOutTime: '19:00', status: 'checked-out' },
-      ];
-
-      dispatch(setAnnouncements(mockAnnouncements));
-      dispatch(setHolidays(mockHolidays));
-
-      // Add mock records to Redux
-      mockRecords.forEach((record) => {
-        dispatch(addCheckInOutRecord(record));
-      });
-    };
-
-    loadMockData();
-  }, [dispatch]);
-
-  const handleCheckIn = () => {
-    const now = new Date();
-    const time = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-
-    dispatch(
-      checkIn({
-        date: today,
-        time,
-      })
-    );
-
-    Alert.alert('Success', `Checked in at ${time}`, [{ text: 'OK' }]);
-  };
-
-  const handleCheckOut = () => {
-    if (!currentDayCheckedIn) {
-      Alert.alert('Error', 'Please check in first before checking out', [{ text: 'OK' }]);
-      return;
-    }
-
-    const now = new Date();
-    const time = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-
-    dispatch(
-      checkOut({
-        date: today,
-        time,
-      })
-    );
-
-    Alert.alert('Success', `Checked out at ${time}`, [{ text: 'OK' }]);
-  };
-
-  const nowDate = new Date();
-  const weekday = nowDate.toLocaleDateString('en-US', { weekday: 'long' });
-  const dd = String(nowDate.getDate()).padStart(2, '0');
-  const mm = String(nowDate.getMonth() + 1).padStart(2, '0');
-  const yyyy = nowDate.getFullYear();
-  const formattedDate = `${weekday} - ${dd}/${mm}/${yyyy}`;
 
   return (
     <View style={[CommonStyles.container]}>
       <CommonHeader title="Dashboard" />
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Check In / Check Out Card */}
-        <CheckInOutCard
-          userName={user ? user?.name : ''}
-          currentDateStr={formattedDate}
-          shiftName="General"
-          shiftTime="10:00 TO 19:00"
-          currentDayCheckedIn={currentDayCheckedIn}
-          currentDayCheckedOut={currentDayCheckedOut}
-          currentCheckInTime={todayRecord?.checkInTime}
-          currentCheckOutTime={todayRecord?.checkOutTime}
-          onCheckIn={handleCheckIn}
-          onCheckOut={handleCheckOut}
-        />
+        {/* statistics cards */}
+        <View style={localStyles.statsContainer}>
+          <StatsCard title="Total Employees" value={stats.total} />
+          <StatsCard title="Present Employees" value={stats.present} />
+          <StatsCard title="Absent Employees" value={stats.absent} />
+        </View>
 
-        {/* Announcements List */}
-        <AnnouncementsList announcements={announcements} />
-        {/* Upcoming Holidays */}
-        <HolidaysList holidays={holidays} />
+        {/* notifications list */}
+        <NotificationList notifications={notifications} />
       </ScrollView>
     </View>
   );
 };
+
+const localStyles = StyleSheet.create({
+  statsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    flexWrap: 'wrap',
+    paddingHorizontal: moderateScale(15),
+    marginTop: verticalScale(20),
+  },
+});

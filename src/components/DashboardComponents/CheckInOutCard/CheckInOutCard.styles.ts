@@ -37,6 +37,9 @@ export const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
   },
+  alignItemCenter: {
+    alignItems: 'center',
+  },
 
   timeText: {
     fontSize: textScale(15),
@@ -61,7 +64,7 @@ export const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
   },
   checkOutButton: {
-    backgroundColor: Colors.secondary,
+    backgroundColor: Colors.primary,
   },
   buttonText: {
     color: Colors.white,
@@ -104,7 +107,9 @@ export const styles = StyleSheet.create({
   },
   countersRow: {
     flexDirection: 'row',
-    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
     marginBottom: verticalScale(12),
   },
   counterBox: {
@@ -115,8 +120,8 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   counterText: {
-    fontSize: moderateScale(18),
-    fontWeight: '700',
+    fontSize: textScale(18),
+    fontFamily: FontFamily.FONT_FAMILY_PRIMARY_MEDIUM,
     color: Colors.darkgray,
   },
   shiftContainer: {
@@ -124,16 +129,17 @@ export const styles = StyleSheet.create({
     marginBottom: verticalScale(12),
   },
   shiftName: {
-    fontSize: moderateScale(14),
-    color: Colors.darkgray,
-    fontWeight: '500',
+    fontSize: textScale(8),
+    fontFamily: FontFamily.FONT_FAMILY_PRIMARY_BOLD,
+    color: Colors.grey[500],
   },
   shiftTime: {
-    fontSize: moderateScale(12),
+    fontSize: textScale(7),
+    fontFamily: FontFamily.FONT_FAMILY_PRIMARY_MEDIUM,
     color: Colors.grey[500],
   },
   separatorLine: {
-    height: verticalScale(1),
+    height: verticalScale(5),
     backgroundColor: Colors.gainsboro,
     marginVertical: verticalScale(12),
   },

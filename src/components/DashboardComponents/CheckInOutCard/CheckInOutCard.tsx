@@ -117,7 +117,7 @@ export const CheckInOutCard: React.FC<CheckInOutCardProps> = ({
         {/* Check In Section */}
         <View style={styles.statusSection}>
           {currentDayCheckedIn ? (
-            <View>
+            <View style={styles.alignItemCenter}>
               <Text style={styles.timeText}>{currentCheckInTime || '--:--'}</Text>
               <Text style={styles.statusText}>Checked In</Text>
               {/* show live duration when checked in and not checked out */}
@@ -135,7 +135,7 @@ export const CheckInOutCard: React.FC<CheckInOutCardProps> = ({
         {/* Check Out Section */}
         <View style={styles.statusSection}>
           {currentDayCheckedOut ? (
-            <View>
+            <View style={styles.alignItemCenter}>
               <Text style={styles.timeText}>{currentCheckOutTime || '--:--'}</Text>
               <Text style={styles.statusText}>Checked Out</Text>
             </View>

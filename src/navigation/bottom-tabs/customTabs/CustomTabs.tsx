@@ -1,11 +1,11 @@
 import { NavigationHelpers, TabNavigationState } from '@react-navigation/native';
-import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
-import { Screens } from '../../constants/Screens';
-import { FontFamily, FontSize } from '../../styles/typography';
-import { scale, verticalScale } from '../../styles/responsiveStyles';
-import { Colors } from '../../styles/colors';
-import { CommonStyles } from '../../styles/commonStyles';
-import Images from '../../constants/Images';
+import { View, Text, TouchableOpacity, Image } from 'react-native';
+import { Screens } from '../../../constants/Screens';
+import { FontFamily } from '../../../styles/typography';
+import { Colors } from '../../../styles/colors';
+import { CommonStyles } from '../../../styles/commonStyles';
+import Images from '../../../constants/Images';
+import { styles } from './CustomTabs.styles';
 
 export const CustomBottomTabs = ({
   state,
@@ -74,27 +74,3 @@ export const CustomBottomTabs = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  tabContainer: {
-    width: '100%',
-    height: verticalScale(80),
-    justifyContent: 'space-evenly',
-    backgroundColor: Colors.white,
-    borderTopWidth: 1,
-    borderTopColor: Colors.gainsboro,
-  },
-  tabItemContainer: {
-    gap: 6,
-    borderTopColor: Colors.blue,
-    height: '100%',
-    width: '25%',
-  },
-  tabImage: {
-    width: scale(22),
-    height: verticalScale(22),
-  },
-  tabTitle: {
-    fontSize: FontSize.XS_8,
-  },
-});

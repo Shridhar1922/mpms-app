@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useCallback } from 'react';
 import { Animated, Text } from 'react-native';
 import { styles } from './CustomToast.styles';
-import AppIcon from '../../AppIcon/AppIcon';
+import AppIcon from '../../appIcon/AppIcon';
 import { ERROR_ICON, INFO_ICON, SUCCESS_ICON } from '../../../assets/svgIcons/SvgIcon';
 
 type ToastType = 'success' | 'error' | 'info';

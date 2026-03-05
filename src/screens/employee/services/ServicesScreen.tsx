@@ -3,12 +3,12 @@ import React from 'react';
 import { CommonStyles } from '../../../styles/commonStyles';
 import { CommonHeader } from '../../../components/commonHeader/CommonHeader';
 
-export const SettingsScreen = () => {
+export const ServicesScreen = () => {
   return (
     <View style={[CommonStyles.container]}>
-      <CommonHeader title="Settings" />
+      <CommonHeader title="Services" />
       <View>
-        <Text>Settings Screen</Text>
+        <Text>emp Services Screen</Text>
       </View>
     </View>
   );
