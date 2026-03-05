@@ -1,23 +1,26 @@
 import { useState } from 'react';
 import { View, Text, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import CustomInput from '../../components/CustomeInput/CustomInput';
+import { useDispatch } from 'react-redux';
+import CustomInput from '../../components/customeInput/CustomInput';
 import { CommonStyles, Spacing } from '../../styles/commonStyles';
 import Images from '../../constants/Images';
 import { horizontalScale } from '../../styles/responsiveStyles';
-import AppButton from '../../components/AppButton/AppButton';
+import AppButton from '../../components/appButton/AppButton';
 import { Screens } from '../../constants/Screens';
 import { styles } from './LogInScreen.styles';
 import { useLoginMutation } from '../../redux/api/auth.api';
-import { useToast } from '../../components/Toast/ToastContext/ToastContext';
+import { useToast } from '../../components/toast/ToastContext/ToastContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { USER_INFO } from '../../constants/StaticData';
+import { setCredentials } from '../../redux/slices/authSlice';
 
 export const LogInScreen = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [loading, setLoading] = useState(false);
-  const [loginMutation, { isLoading, isSuccess, isError, data }] = useLoginMutation();
+  const [loginMutation] = useLoginMutation();
+  const dispatch = useDispatch();
   const { showToast } = useToast();
 
   // Use the typed navigation hook
@@ -69,6 +72,7 @@ export const LogInScreen = () => {
         await AsyncStorage.setItem(USER_INFO.REFRESH, response.data.refreshToken);
         await AsyncStorage.setItem(USER_INFO.TOKEN, response.data.accessToken);
         await AsyncStorage.setItem(USER_INFO.USER, JSON.stringify(response.data.user));
+        dispatch(setCredentials({ user: response.data.user, token: response.data.accessToken }));
         setLoading(false);
         navigation.navigate(Screens.Main.TABS, { screen: Screens.Main.DASHBOARD });
       }

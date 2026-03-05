@@ -8,7 +8,7 @@ export const SettingsScreen = () => {
     <View style={[CommonStyles.container]}>
       <CommonHeader title="Settings" />
       <View>
-        <Text>Settings Screen</Text>
+        <Text>emp Settings Screen</Text>
       </View>
     </View>
   );

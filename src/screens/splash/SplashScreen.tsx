@@ -11,7 +11,7 @@ import { USER_INFO } from '../../constants/StaticData';
 
 const SplashScreen = () => {
   const navigation = useNavigation();
-  const [refreshTokenMutation, { isLoading }] = useRefreshTokenMutation();
+  const [refreshTokenMutation] = useRefreshTokenMutation();
 
   const initializeApp = useCallback(async () => {
     try {
@@ -20,15 +20,19 @@ const SplashScreen = () => {
       console.log('refreshToken', refreshToken);
       console.log('====================================');
       if (!refreshToken) {
+        console.log('inside if');
         navigation.navigate(Screens.Auth.LOGIN);
         return;
       }
 
       const response = await refreshTokenMutation({
-        refresh: refreshToken,
+        refreshToken,
       }).unwrap();
 
-      if (response?.status) {
+      console.log('response refreshToken', response);
+      if (response?.success) {
+        await AsyncStorage.setItem(USER_INFO.REFRESH, response.data.refreshToken);
+        await AsyncStorage.setItem(USER_INFO.TOKEN, response.data.accessToken);
         navigation.navigate(Screens.Main.TABS, { screen: Screens.Main.DASHBOARD });
       } else {
         navigation.navigate(Screens.Auth.LOGIN);

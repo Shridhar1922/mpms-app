@@ -39,6 +39,20 @@ export const CommonStyles = StyleSheet.create({
     backgroundColor: Colors.white,
     width: '100%',
   },
+  userInfoContainer: {
+    padding: moderateScale(16),
+    alignItems: 'center',
+  },
+  userName: {
+    fontSize: moderateScale(20),
+    fontWeight: '600',
+    color: Colors.darkgray,
+  },
+  userDate: {
+    fontSize: moderateScale(14),
+    color: Colors.grey[500],
+    marginTop: verticalScale(4),
+  },
 
   // Shadow helper (iOS/Android)
   shadow: {

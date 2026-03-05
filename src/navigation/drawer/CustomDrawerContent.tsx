@@ -1,25 +1,67 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { DrawerContentScrollView } from '@react-navigation/drawer';
 import { Screens } from '../../constants/Screens';
-import { DashboardScreen } from '../../screens/employer/dashboard/DashboardScreen';
-import { ServicesScreen } from '../../screens/employer/services/ServicesScreen';
-import { ProfileScreen } from '../../screens/employer/profile/ProfileScreen';
-import { SettingsScreen } from '../../screens/employer/settings/SettingsScreen';
+// Employer screens
+import { DashboardScreen as EmployerDashboardScreen } from '../../screens/employer/dashboard/DashboardScreen';
+import { ServicesScreen as EmployerServicesScreen } from '../../screens/employer/services/ServicesScreen';
+import { ProfileScreen as EmployerProfileScreen } from '../../screens/employer/profile/ProfileScreen';
+import { SettingsScreen as EmployerSettingsScreen } from '../../screens/employer/settings/SettingsScreen';
+// Employee screens
+import { DashboardScreen as EmployeeDashboardScreen } from '../../screens/employee/dashboard/DashboardScreen';
+import { ServicesScreen as EmployeeServicesScreen } from '../../screens/employee/services/ServicesScreen';
+import { ProfileScreen as EmployeeProfileScreen } from '../../screens/employee/profile/ProfileScreen';
+import { SettingsScreen as EmployeeSettingsScreen } from '../../screens/employee/settings/SettingsScreen';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { USER_INFO } from '../../constants/StaticData';
+import { UserType } from '../../constants/types';
+import { styles } from './CustomDrawerContent.styles';
 
 export const CustomDrawerContent = (props: any) => {
-  const TabList = [
-    { name: Screens.Main.DASHBOARD, component: DashboardScreen, label: 'Dashboard' },
-    { name: Screens.Main.SERVICES, component: ServicesScreen, label: 'Services' },
-    { name: Screens.Main.PROFILE, component: ProfileScreen, label: 'Profile' },
-    { name: Screens.Main.SETTINGS, component: SettingsScreen, label: 'Settings' },
-  ];
+  const [isEmployee, setIsEmployee] = useState<Boolean>(false);
+  const [user, setUser] = useState<UserType | null>(null);
+  // load user from AsyncStorage
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const json = await AsyncStorage.getItem(USER_INFO.USER);
+        if (json) {
+          console.log('JSON.parse(json).roles.name', JSON.parse(json).roles[0].name);
+
+          setIsEmployee(JSON.parse(json).roles[0].name === 'EMPLOYEE');
+          setUser(JSON.parse(json));
+        }
+      } catch (e) {
+        console.warn('Failed to load user from storage', e);
+      }
+    };
+    loadUser();
+  }, []);
+
+  console.log('isEmployee..............', isEmployee);
+
+  const TabList = isEmployee
+    ? [
+        { name: Screens.Main.DASHBOARD, component: EmployeeDashboardScreen, label: 'Dashboard' },
+        { name: Screens.Main.SERVICES, component: EmployeeServicesScreen, label: 'Services' },
+        { name: Screens.Main.PROFILE, component: EmployeeProfileScreen, label: 'Profile' },
+        { name: Screens.Main.SETTINGS, component: EmployeeSettingsScreen, label: 'Settings' },
+      ]
+    : [
+        { name: Screens.Main.DASHBOARD, component: EmployerDashboardScreen, label: 'Dashboard' },
+        { name: Screens.Main.SERVICES, component: EmployerServicesScreen, label: 'Services' },
+        { name: Screens.Main.PROFILE, component: EmployerProfileScreen, label: 'Profile' },
+        { name: Screens.Main.SETTINGS, component: EmployerSettingsScreen, label: 'Settings' },
+      ];
+
+  console.log('TabList', TabList);
 
   return (
     <DrawerContentScrollView {...props}>
       <View style={styles.profileSection}>
-        <Text style={styles.userName}>Shridhar</Text>
-        <Text style={styles.userEmail}>shridhar@gmail.com</Text>
+        <Text style={styles.userName}>{user ? user?.name : ''}</Text>
+        <Text style={styles.userEmail}>{user ? user?.email : ''}</Text>
       </View>
 
       {TabList.map((tab) => (
@@ -32,39 +74,15 @@ export const CustomDrawerContent = (props: any) => {
         </TouchableOpacity>
       ))}
 
-      <TouchableOpacity style={styles.drawerItem}>
+      <TouchableOpacity
+        style={styles.drawerItem}
+        onPress={async () => {
+          await AsyncStorage.clear();
+          props.navigation.navigate(Screens.Auth.LOGIN);
+        }}
+      >
         <Text style={[styles.drawerText, styles.colorRed]}>Logout</Text>
       </TouchableOpacity>
     </DrawerContentScrollView>
   );
 };
-
-const styles = StyleSheet.create({
-  profileSection: {
-    padding: 20,
-    backgroundColor: '#007AFF',
-  },
-  userName: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: 'white',
-  },
-  userEmail: {
-    fontSize: 14,
-    color: '#f2f2f2',
-    marginTop: 5,
-  },
-  drawerItem: {
-    padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-  },
-  drawerText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
-  },
-  colorRed: {
-    color: 'red',
-  },
-});
