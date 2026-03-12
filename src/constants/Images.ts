@@ -10,5 +10,10 @@ const Images = {
   letterIcon: require('../assets/images/services/letter.png'),
   myFilesIcon: require('../assets/images/services/myFiles.png'),
   supportIcon: require('../assets/images/services/support.png'),
+  editProfileIcon: require('../assets/images/profile/editProfile.png'),
+  notificationIcon: require('../assets/images/profile/notification.png'),
+  privacyIcon: require('../assets/images/profile/privacy.png'),
+  settingsIcon: require('../assets/images/profile/settings.png'),
+  logoutIcon: require('../assets/images/profile/logout.png'),
 };
 export default Images;

@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { styles } from './ProfileScreen.styles';
+import Images from '../../../constants/Images';
+
 export const ProfileScreen = () => {
   return (
     <View style={styles.container}>
@@ -95,22 +97,28 @@ export const ProfileScreen = () => {
           <Text style={styles.sectionTitle}>Quick Actions</Text>
 
           <TouchableOpacity style={styles.actionBtn}>
+            <Image source={Images.editProfileIcon} style={styles.icon} resizeMode="contain" />
             <Text style={styles.actionText}>Edit Profile</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.actionBtn}>
+            <Image source={Images.notificationIcon} style={styles.icon} resizeMode="contain" />
             <Text style={styles.actionText}>Notifications</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.actionBtn}>
+            <Image source={Images.privacyIcon} style={styles.icon} resizeMode="contain" />
             <Text style={styles.actionText}>Privacy & Security</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.actionBtn}>
+            <Image source={Images.supportIcon} style={styles.icon} resizeMode="contain" />
             <Text style={styles.actionText}>Help & Support</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.actionBtn}>
+            <Image source={Images.settingsIcon} style={styles.icon} resizeMode="contain" />
             <Text style={styles.actionText}>Settings</Text>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.actionBtn]}>
+            <Image source={Images.logoutIcon} style={styles.icon} resizeMode="contain" />
             <Text style={styles.actionText}>Logout</Text>
           </TouchableOpacity>
         </View>

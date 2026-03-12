@@ -91,12 +91,12 @@ export const styles = StyleSheet.create({
 
   w100: {
     width: '100%',
-    paddingLeft: moderateScale(10),
+    paddingLeft: moderateScale(5),
   },
 
   w48: {
     width: '48%',
-    paddingLeft: moderateScale(10),
+    paddingLeft: moderateScale(5),
   },
 
   label: {
@@ -115,9 +115,12 @@ export const styles = StyleSheet.create({
 
   actionBtn: {
     borderRadius: moderateScale(8),
-    marginBottom: moderateScale(10),
-    paddingHorizontal: moderateScale(10),
+    marginBottom: moderateScale(15),
     paddingBottom: moderateScale(3),
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: moderateScale(10),
+    paddingLeft: moderateScale(5),
   },
 
   actionText: {
@@ -135,5 +138,9 @@ export const styles = StyleSheet.create({
     elevation: 2,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
+  },
+  icon: {
+    width: scale(20),
+    height: scale(20),
   },
 });
