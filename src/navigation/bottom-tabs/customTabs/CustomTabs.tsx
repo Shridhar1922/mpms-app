@@ -1,5 +1,7 @@
 import { NavigationHelpers, TabNavigationState } from '@react-navigation/native';
-import { View, Text, TouchableOpacity, Image } from 'react-native';
+import { View, Text, TouchableOpacity, Image, Modal } from 'react-native';
+import { useState } from 'react';
+
 import { Screens } from '../../../constants/Screens';
 import { FontFamily } from '../../../styles/typography';
 import { Colors } from '../../../styles/colors';
@@ -16,61 +18,99 @@ export const CustomBottomTabs = ({
   descriptors: any;
   navigation: NavigationHelpers<any, any>;
 }) => {
+  const [menuVisible, setMenuVisible] = useState(false);
+
   return (
-    <View style={[CommonStyles.row, styles.tabContainer]}>
-      {state.routes.map((route, index) => {
-        const isFocused = state.index === index;
-        const color = isFocused ? Colors.blue : Colors.dimgray;
+    <>
+      <View style={[CommonStyles.row, styles.tabContainer]}>
+        {state.routes.map((route, index) => {
+          const isFocused = state.index === index;
+          const color = isFocused ? Colors.blue : Colors.dimgray;
+          const { options } = descriptors[route.key];
+          const label = options.tabBarLabel ?? route.name;
 
-        const { options } = descriptors[route.key];
-        const label = options.tabBarLabel ?? route.name;
+          let iconSource;
 
-        let iconSource;
+          if (route.name === Screens.Main.DASHBOARD) iconSource = Images.home;
+          else if (route.name === Screens.Main.SERVICES) iconSource = Images.search;
+          else if (route.name === Screens.Main.PROFILE) iconSource = Images.user;
+          else if (route.name === Screens.Main.SETTINGS) iconSource = Images.more;
 
-        if (route.name === Screens.Main.DASHBOARD) {
-          iconSource = Images.home;
-        } else if (route.name === Screens.Main.SERVICES) {
-          iconSource = Images.search;
-        } else if (route.name === Screens.Main.PROFILE) {
-          iconSource = Images.user;
-        } else if (route.name === Screens.Main.SETTINGS) {
-          iconSource = Images.more;
-        }
-
-        return (
-          <TouchableOpacity
-            key={route.key}
-            style={[
-              styles.tabItemContainer,
-              CommonStyles.center,
-              {
-                borderTopWidth: isFocused ? 2 : 0,
-                backgroundColor: isFocused ? Colors.offwhite : Colors.white,
-              },
-            ]}
-            onPress={() => navigation.navigate(route.name)}
-          >
-            <Image
-              source={iconSource}
-              style={[styles.tabImage, { tintColor: color }]}
-              resizeMode="contain"
-            />
-            <Text
+          return (
+            <TouchableOpacity
+              key={route.key}
               style={[
-                styles.tabTitle,
+                styles.tabItemContainer,
+                CommonStyles.center,
                 {
-                  color,
-                  fontFamily: isFocused
-                    ? FontFamily.FONT_FAMILY_PRIMARY_SEMI_BOLD
-                    : FontFamily.FONT_FAMILY_PRIMARY_REGULAR,
+                  borderTopWidth: isFocused ? 2 : 0,
+                  backgroundColor: isFocused ? Colors.offwhite : Colors.white,
                 },
               ]}
+              onPress={() => navigation.navigate(route.name)}
             >
-              {label}
-            </Text>
-          </TouchableOpacity>
-        );
-      })}
-    </View>
+              <Image
+                source={iconSource}
+                style={[styles.tabImage, { tintColor: color }]}
+                resizeMode="contain"
+              />
+              <Text
+                style={[
+                  styles.tabTitle,
+                  {
+                    color,
+                    fontFamily: isFocused
+                      ? FontFamily.FONT_FAMILY_PRIMARY_SEMI_BOLD
+                      : FontFamily.FONT_FAMILY_PRIMARY_REGULAR,
+                  },
+                ]}
+              >
+                {label}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+
+        {/* PLUS BUTTON */}
+        <TouchableOpacity style={styles.plusButton} onPress={() => setMenuVisible(true)}>
+          <Text style={styles.plusText}>+</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* MODAL MENU */}
+      <Modal visible={menuVisible} transparent animationType="fade">
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setMenuVisible(false)}
+        >
+          <View style={styles.modalMenu}>
+            <TouchableOpacity style={styles.menuItem}>
+              <Image source={Images.home} style={[styles.modalImg]} resizeMode="contain" />
+              <Text style={styles.menuText}>Create Job</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.menuItem}>
+              <Image source={Images.home} style={[styles.modalImg, {}]} resizeMode="contain" />
+              <Text style={styles.menuText}>Add Service</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.menuItem}>
+              <Image source={Images.home} style={[styles.modalImg]} resizeMode="contain" />
+              <Text style={styles.menuText}>Upload Document</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.menuItem}>
+              <Image source={Images.home} style={[styles.modalImg, {}]} resizeMode="contain" />
+              <Text style={styles.menuText}>Add Service</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.menuItem}>
+              <Image source={Images.home} style={[styles.modalImg]} resizeMode="contain" />
+              <Text style={styles.menuText}>Upload Document</Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
+    </>
   );
 };
