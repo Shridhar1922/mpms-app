@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text, FlatList } from 'react-native';
-import { Colors } from '../../../styles/colors';
 import { styles } from './NotificationList.styles.ts';
 
 export interface NotificationItemType {

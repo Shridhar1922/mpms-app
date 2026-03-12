@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { verticalScale, moderateScale, textScale, scale } from '../../../styles/responsiveStyles';
+import { verticalScale, moderateScale, textScale } from '../../../styles/responsiveStyles';
 import { Colors } from '../../../styles/colors';
 import { FontFamily } from '../../../styles/typography';
 

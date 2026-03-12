@@ -4,7 +4,6 @@ import {
   horizontalScale,
   moderateScale,
   textScale,
-  scale,
 } from '../../../styles/responsiveStyles';
 import { Colors } from '../../../styles/colors';
 import { FontFamily } from '../../../styles/typography';
