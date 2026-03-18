@@ -17,6 +17,11 @@ export type MainStackParamList = {
   [Screens.Main.PROFILE]: { userId: string } | undefined;
   [Screens.Main.SERVICES]: undefined;
   [Screens.Main.SETTINGS]: undefined;
+  [Screens.Main.EDIT_PROFILE]: undefined;
+  [Screens.Services.ADD_EMPLOYEE]: undefined;
+  [Screens.Services.ADD_HOLIDAY]: undefined;
+  [Screens.Services.APPLY_LEAVE]: undefined;
+  [Screens.Services.ATTENDANCE_REQUEST]: undefined;
 };
 
 // This magic block makes useNavigation() work everywhere without extra imports

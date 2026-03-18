@@ -15,5 +15,9 @@ const Images = {
   privacyIcon: require('../assets/images/profile/privacy.png'),
   settingsIcon: require('../assets/images/profile/settings.png'),
   logoutIcon: require('../assets/images/profile/logout.png'),
+  myEmployeeIcon: require('../assets/images/services/myEmployee.png'),
+  holidayIcon: require('../assets/images/services/hoilday.png'),
+  announcementIcon: require('../assets/images/services/announcement.png'),
+  organizationIcon: require('../assets/images/services/organization.png'),
 };
 export default Images;

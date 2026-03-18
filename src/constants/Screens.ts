@@ -10,7 +10,14 @@ export const Screens = {
     USER_LIST: 'UserListScreen',
     DASHBOARD: 'DashboardScreen',
     PROFILE: 'ProfileScreen',
+    EDIT_PROFILE: 'EditProfileScreen',
     SERVICES: 'ServicesScreen',
     SETTINGS: 'SettingsScreen',
+  },
+  Services: {
+    ADD_EMPLOYEE: 'AddEmployeeScreen',
+    ADD_HOLIDAY: 'AddHolidayScreen',
+    APPLY_LEAVE: 'ApplyLeaveScreen',
+    ATTENDANCE_REQUEST: 'AttendanceRequestScreen',
   },
 } as const;

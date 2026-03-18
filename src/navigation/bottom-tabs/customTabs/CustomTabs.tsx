@@ -1,6 +1,6 @@
 import { NavigationHelpers, TabNavigationState } from '@react-navigation/native';
 import { View, Text, TouchableOpacity, Image, Modal } from 'react-native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Screens } from '../../../constants/Screens';
 import { FontFamily } from '../../../styles/typography';
@@ -8,6 +8,8 @@ import { Colors } from '../../../styles/colors';
 import { CommonStyles } from '../../../styles/commonStyles';
 import Images from '../../../constants/Images';
 import { styles } from './CustomTabs.styles';
+import { USER_INFO } from '../../../constants/StaticData';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const CustomBottomTabs = ({
   state,
@@ -19,6 +21,35 @@ export const CustomBottomTabs = ({
   navigation: NavigationHelpers<any, any>;
 }) => {
   const [menuVisible, setMenuVisible] = useState(false);
+  const [isEmployee, setIsEmployee] = useState(false);
+  useEffect(() => {
+    console.log('CustomBottomTabs useEffect called');
+    const loadUser = async () => {
+      try {
+        const json = await AsyncStorage.getItem(USER_INFO.USER);
+        console.log('json...........', json);
+
+        if (json) {
+          setIsEmployee(JSON.parse(json).roles[0].name === 'EMPLOYEE');
+        }
+      } catch (e) {
+        console.warn('Failed to load user from storage', e);
+      }
+    };
+    loadUser();
+  }, []);
+
+  console.log('CustomBottomTabs isEmployee', isEmployee);
+
+  const TabList = isEmployee
+    ? [
+        { name: Screens.Services.APPLY_LEAVE, component: '', label: 'Apply Leave' },
+        { name: Screens.Services.ATTENDANCE_REQUEST, component: '', label: 'Attendance Request' },
+      ]
+    : [
+        { name: Screens.Services.ADD_EMPLOYEE, component: '', label: 'Add Employee' },
+        { name: Screens.Services.ADD_HOLIDAY, component: '', label: 'Add Holiday' },
+      ];
 
   return (
     <>
@@ -85,29 +116,12 @@ export const CustomBottomTabs = ({
           onPress={() => setMenuVisible(false)}
         >
           <View style={styles.modalMenu}>
-            <TouchableOpacity style={styles.menuItem}>
-              <Image source={Images.home} style={[styles.modalImg]} resizeMode="contain" />
-              <Text style={styles.menuText}>Create Job</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.menuItem}>
-              <Image source={Images.home} style={[styles.modalImg, {}]} resizeMode="contain" />
-              <Text style={styles.menuText}>Add Service</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.menuItem}>
-              <Image source={Images.home} style={[styles.modalImg]} resizeMode="contain" />
-              <Text style={styles.menuText}>Upload Document</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.menuItem}>
-              <Image source={Images.home} style={[styles.modalImg, {}]} resizeMode="contain" />
-              <Text style={styles.menuText}>Add Service</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.menuItem}>
-              <Image source={Images.home} style={[styles.modalImg]} resizeMode="contain" />
-              <Text style={styles.menuText}>Upload Document</Text>
-            </TouchableOpacity>
+            {TabList.map((item) => (
+              <TouchableOpacity key={item.name} style={styles.menuItem}>
+                <Image source={Images.home} style={[styles.modalImg]} resizeMode="contain" />
+                <Text style={styles.menuText}>{item.label}</Text>
+              </TouchableOpacity>
+            ))}
           </View>
         </TouchableOpacity>
       </Modal>
