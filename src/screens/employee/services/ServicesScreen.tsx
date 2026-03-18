@@ -4,8 +4,9 @@ import { CommonStyles } from '../../../styles/commonStyles';
 import { CommonHeader } from '../../../components/commonHeader/CommonHeader';
 import { styles } from './Services.styles';
 import Images from '../../../constants/Images';
+import { Screens } from '../../../constants/Screens';
 
-export const ServicesScreen = () => {
+export const ServicesScreen = ({ navigation }: { navigation: any }) => {
   const services = [
     { title: 'Attendance', icon: Images.attendanceIcon },
     { title: 'Regularization', icon: Images.regularizationIcon },
@@ -31,7 +32,10 @@ export const ServicesScreen = () => {
           {services.map((item, index) => (
             <View key={index} style={styles.serviceButtonContainer}>
               <View>
-                <TouchableOpacity style={styles.serviceButton}>
+                <TouchableOpacity
+                  style={styles.serviceButton}
+                  onPress={() => navigation.navigate(Screens.Services.ATTENDANCE_REQUEST)}
+                >
                   <Image source={item.icon} style={styles.icon} resizeMode="contain" />
                   <Text style={styles.title}>{item.title}</Text>
                 </TouchableOpacity>

@@ -1,9 +1,10 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { styles } from './ProfileScreen.styles';
-import Images from '../../../constants/Images';
+import { quickActions } from '../../../constants/ProfileData';
+import { Screens } from '../../../constants/Screens';
 
-export const ProfileScreen = () => {
+export const ProfileScreen = ({ navigation }: { navigation: any }) => {
   return (
     <View style={styles.container}>
       {/* HEADER */}
@@ -96,31 +97,16 @@ export const ProfileScreen = () => {
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>Quick Actions</Text>
 
-          <TouchableOpacity style={styles.actionBtn}>
-            <Image source={Images.editProfileIcon} style={styles.icon} resizeMode="contain" />
-            <Text style={styles.actionText}>Edit Profile</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.actionBtn}>
-            <Image source={Images.notificationIcon} style={styles.icon} resizeMode="contain" />
-            <Text style={styles.actionText}>Notifications</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.actionBtn}>
-            <Image source={Images.privacyIcon} style={styles.icon} resizeMode="contain" />
-            <Text style={styles.actionText}>Privacy & Security</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.actionBtn}>
-            <Image source={Images.supportIcon} style={styles.icon} resizeMode="contain" />
-            <Text style={styles.actionText}>Help & Support</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.actionBtn}>
-            <Image source={Images.settingsIcon} style={styles.icon} resizeMode="contain" />
-            <Text style={styles.actionText}>Settings</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.actionBtn]}>
-            <Image source={Images.logoutIcon} style={styles.icon} resizeMode="contain" />
-            <Text style={styles.actionText}>Logout</Text>
-          </TouchableOpacity>
+          {quickActions.map((item) => (
+            <TouchableOpacity
+              key={item.id}
+              style={styles.actionBtn}
+              onPress={() => navigation.navigate(Screens.Main.EDIT_PROFILE)}
+            >
+              <Image source={item.icon} style={styles.icon} resizeMode="contain" />
+              <Text style={styles.actionText}>{item.title}</Text>
+            </TouchableOpacity>
+          ))}
         </View>
       </ScrollView>
     </View>

@@ -1,10 +1,19 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+export type AttendanceStatus =
+  | 'present'
+  | 'absent'
+  | 'weekly-off'
+  | 'holiday'
+  | 'leave'
+  | 'half-day';
+
 export interface CheckInOutRecord {
   date: string; // YYYY-MM-DD format
   checkInTime?: string; // HH:mm format
   checkOutTime?: string; // HH:mm format
   status: 'checked-in' | 'checked-out' | 'absent';
+  attendanceStatus?: AttendanceStatus; // attendance calendar status
 }
 
 export interface Announcement {

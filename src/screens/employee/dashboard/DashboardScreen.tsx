@@ -7,6 +7,7 @@ import {
   CheckInOutCard,
   AnnouncementsList,
   HolidaysList,
+  AttendanceCalendar,
 } from '../../../components/dashboardComponents';
 import {
   checkIn,
@@ -112,9 +113,54 @@ export const DashboardScreen = () => {
 
       // Mock check-in/check-out records for past days
       const mockRecords: CheckInOutRecord[] = [
-        { date: '2026-02-28', checkInTime: '09:15', checkOutTime: '18:30', status: 'checked-out' },
-        { date: '2026-03-01', checkInTime: '09:00', checkOutTime: '18:15', status: 'checked-out' },
-        { date: '2026-03-02', checkInTime: '09:30', checkOutTime: '19:00', status: 'checked-out' },
+        {
+          date: '2026-02-28',
+          checkInTime: '09:15',
+          checkOutTime: '18:30',
+          status: 'checked-out',
+          attendanceStatus: 'present',
+        },
+        {
+          date: '2026-03-01',
+          checkInTime: '09:00',
+          checkOutTime: '18:15',
+          status: 'checked-out',
+          attendanceStatus: 'present',
+        },
+        {
+          date: '2026-03-02',
+          checkInTime: '09:30',
+          checkOutTime: '19:00',
+          status: 'checked-out',
+          attendanceStatus: 'present',
+        },
+        {
+          date: '2026-03-03',
+          status: 'absent',
+          attendanceStatus: 'absent',
+        },
+        {
+          date: '2026-03-04',
+          checkInTime: '10:00',
+          checkOutTime: '14:00',
+          status: 'checked-out',
+          attendanceStatus: 'half-day',
+        },
+        {
+          date: '2026-03-07',
+          status: 'absent',
+          attendanceStatus: 'weekly-off',
+        },
+        {
+          date: '2026-03-11',
+          status: 'absent',
+          attendanceStatus: 'leave',
+        },
+        {
+          date: '2026-03-12',
+          status: 'absent',
+          attendanceStatus: 'leave',
+        },
       ];
 
       dispatch(setAnnouncements(mockAnnouncements));
@@ -185,6 +231,13 @@ export const DashboardScreen = () => {
           currentCheckOutTime={todayRecord?.checkOutTime}
           onCheckIn={handleCheckIn}
           onCheckOut={handleCheckOut}
+        />
+
+        {/* Attendance Calendar */}
+        <AttendanceCalendar
+          checkInOutRecords={checkInOutRecords}
+          holidays={holidays}
+          todayDate={today}
         />
 
         {/* Announcements List */}
