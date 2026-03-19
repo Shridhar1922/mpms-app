@@ -53,31 +53,36 @@ export const CheckInOutCard: React.FC<CheckInOutCardProps> = ({
   // };
 
   const [elapsed, setElapsed] = React.useState('00:00:00');
+  const [elapsedSeconds, setElapsedSeconds] = React.useState(0);
 
   React.useEffect(() => {
     let interval: ReturnType<typeof setInterval> | null = null;
-    if (currentDayCheckedIn && !currentDayCheckedOut && currentCheckInTime) {
+    if (currentDayCheckedIn && !currentDayCheckedOut) {
+      // Reset elapsed time to 0 when check-in starts
+      setElapsedSeconds(0);
+
       const updateElapsed = () => {
-        const [h, m] = currentCheckInTime.split(':').map(Number);
-        const start = new Date();
-        start.setHours(h, m, 0, 0);
-        const now = new Date();
-        let diff = (now.getTime() - start.getTime()) / 1000;
-        if (diff < 0) diff += 24 * 3600;
-        const hh = Math.floor(diff / 3600);
-        diff %= 3600;
-        const mm = Math.floor(diff / 60);
-        const ss = Math.floor(diff % 60);
-        const pad = (n: number) => String(n).padStart(2, '0');
-        setElapsed(`${pad(hh)}:${pad(mm)}:${pad(ss)}`);
+        setElapsedSeconds((prev) => {
+          const newSeconds = prev + 1;
+          const hh = Math.floor(newSeconds / 3600);
+          const mm = Math.floor((newSeconds % 3600) / 60);
+          const ss = newSeconds % 60;
+          const pad = (n: number) => String(n).padStart(2, '0');
+          setElapsed(`${pad(hh)}:${pad(mm)}:${pad(ss)}`);
+          return newSeconds;
+        });
       };
-      updateElapsed();
+
       interval = setInterval(updateElapsed, 1000);
+    } else if (!currentDayCheckedIn) {
+      // Only reset when not checked in (don't reset when just checked out)
+      setElapsedSeconds(0);
+      setElapsed('00:00:00');
     }
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [currentDayCheckedIn, currentDayCheckedOut, currentCheckInTime]);
+  }, [currentDayCheckedIn, currentDayCheckedOut]);
 
   const [hh, mm, ss] = elapsed.split(':');
 

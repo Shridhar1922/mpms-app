@@ -116,7 +116,7 @@ export const styles = StyleSheet.create({
     backgroundColor: Colors.grey[100],
     padding: moderateScale(12),
     borderRadius: moderateScale(8),
-    minWidth: horizontalScale(40),
+    width: scale(70),
     alignItems: 'center',
   },
   counterText: {

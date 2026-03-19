@@ -23,12 +23,16 @@ import { RootState } from '../../../redux/store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { USER_INFO } from '../../../constants/StaticData';
 import { UserType } from '../../../constants/types';
+import { useGetHolidaysQuery } from '../../../redux/api/dashboard.api';
 
 export const DashboardScreen = () => {
   const dispatch = useDispatch();
   const { checkInOutRecords, currentDayCheckedIn, currentDayCheckedOut, announcements, holidays } =
     useSelector((state: RootState) => state.dashboard);
   const [user, setUser] = useState<UserType | null>(null);
+
+  // Fetch holidays from API
+  const { data: holidaysData, isLoading: holidaysLoading } = useGetHolidaysQuery(undefined);
 
   // load user from AsyncStorage
   useEffect(() => {
@@ -74,40 +78,6 @@ export const DashboardScreen = () => {
           content: 'Check out the new health and wellness benefits available to all employees.',
           date: '2026-02-28',
           priority: 'low',
-        },
-      ];
-
-      // Mock holidays
-      const mockHolidays: Holiday[] = [
-        {
-          id: '1',
-          name: 'Holi',
-          date: '2026-03-14',
-          description: 'Festival of Colors - Regional Holiday',
-        },
-        {
-          id: '2',
-          name: 'Good Friday',
-          date: '2026-04-10',
-          description: 'National Holiday',
-        },
-        {
-          id: '3',
-          name: 'Easter Monday',
-          date: '2026-04-13',
-          description: 'Regional Holiday',
-        },
-        {
-          id: '4',
-          name: 'Eid ul-Fitr',
-          date: '2026-04-02',
-          description: 'Islamic Holiday',
-        },
-        {
-          id: '5',
-          name: 'Labour Day',
-          date: '2026-05-01',
-          description: 'National Holiday',
         },
       ];
 
@@ -164,7 +134,6 @@ export const DashboardScreen = () => {
       ];
 
       dispatch(setAnnouncements(mockAnnouncements));
-      dispatch(setHolidays(mockHolidays));
 
       // Add mock records to Redux
       mockRecords.forEach((record) => {
@@ -174,6 +143,20 @@ export const DashboardScreen = () => {
 
     loadMockData();
   }, [dispatch]);
+
+  // Load holidays from API
+  useEffect(() => {
+    if (holidaysData?.data?.items.length > 0) {
+      // Transform API data to match Holiday interface
+      const transformedHolidays = holidaysData?.data?.items.map((holiday: any) => ({
+        id: holiday.id || Math.random().toString(),
+        name: holiday.name || '',
+        date: holiday.date || '',
+        description: holiday.description || '',
+      }));
+      dispatch(setHolidays(transformedHolidays));
+    }
+  }, [holidaysData, dispatch]);
 
   const handleCheckIn = () => {
     const now = new Date();
