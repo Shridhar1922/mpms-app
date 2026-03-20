@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { styles } from './CheckInOutCard.styles';
 
 interface CheckInOutCardProps {
@@ -13,16 +13,18 @@ interface CheckInOutCardProps {
   currentCheckOutTime?: string;
   onCheckIn: () => void;
   onCheckOut: () => void;
+  isCheckInLoading?: boolean;
+  isCheckOutLoading?: boolean;
 }
 
-// helper to compute duration between two HH:mm strings
+// helper to compute duration between two HH:mm:ss strings
 const getDuration = (start: string, end: string) => {
-  const [sh, sm] = start.split(':').map(Number);
-  const [eh, em] = end.split(':').map(Number);
+  const [sh, sm, ss = '0'] = start.split(':').map(Number);
+  const [eh, em, es = '0'] = end.split(':').map(Number);
   const startDate = new Date();
-  startDate.setHours(sh, sm, 0, 0);
+  startDate.setHours(sh, sm, ss, 0);
   const endDate = new Date();
-  endDate.setHours(eh, em, 0, 0);
+  endDate.setHours(eh, em, es, 0);
   let diff = (endDate.getTime() - startDate.getTime()) / 1000;
   if (diff < 0) diff += 24 * 3600; // wrap around midnight
   const h = Math.floor(diff / 3600);
@@ -44,6 +46,8 @@ export const CheckInOutCard: React.FC<CheckInOutCardProps> = ({
   currentCheckOutTime,
   onCheckIn,
   onCheckOut,
+  isCheckInLoading = false,
+  isCheckOutLoading = false,
 }) => {
   // const getCurrentTime = () => {
   //   const now = new Date();
@@ -57,20 +61,25 @@ export const CheckInOutCard: React.FC<CheckInOutCardProps> = ({
 
   React.useEffect(() => {
     let interval: ReturnType<typeof setInterval> | null = null;
-    if (currentDayCheckedIn && !currentDayCheckedOut) {
-      // Reset elapsed time to 0 when check-in starts
-      setElapsedSeconds(0);
+    if (currentDayCheckedIn && !currentDayCheckedOut && currentCheckInTime) {
+      // Initialize elapsed seconds from the actual check-in time
+      const initializeElapsed = () => {
+        const now = new Date();
+        const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+        const duration = getDuration(currentCheckInTime, currentTime);
+        const [h, m, s] = duration.split(':').map(Number);
+        const totalSeconds = h * 3600 + m * 60 + s;
+        setElapsedSeconds(totalSeconds);
+        setElapsed(duration);
+      };
+
+      initializeElapsed();
 
       const updateElapsed = () => {
-        setElapsedSeconds((prev) => {
-          const newSeconds = prev + 1;
-          const hh = Math.floor(newSeconds / 3600);
-          const mm = Math.floor((newSeconds % 3600) / 60);
-          const ss = newSeconds % 60;
-          const pad = (n: number) => String(n).padStart(2, '0');
-          setElapsed(`${pad(hh)}:${pad(mm)}:${pad(ss)}`);
-          return newSeconds;
-        });
+        const now = new Date();
+        const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+        const duration = getDuration(currentCheckInTime, currentTime);
+        setElapsed(duration);
       };
 
       interval = setInterval(updateElapsed, 1000);
@@ -82,7 +91,7 @@ export const CheckInOutCard: React.FC<CheckInOutCardProps> = ({
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [currentDayCheckedIn, currentDayCheckedOut]);
+  }, [currentDayCheckedIn, currentDayCheckedOut, currentCheckInTime]);
 
   const [hh, mm, ss] = elapsed.split(':');
 
@@ -128,8 +137,20 @@ export const CheckInOutCard: React.FC<CheckInOutCardProps> = ({
               {/* show live duration when checked in and not checked out */}
             </View>
           ) : (
-            <TouchableOpacity style={[styles.button, styles.checkInButton]} onPress={onCheckIn}>
-              <Text style={styles.buttonText}>Check In</Text>
+            <TouchableOpacity
+              style={[
+                styles.button,
+                styles.checkInButton,
+                isCheckInLoading && styles.buttonDisabled,
+              ]}
+              onPress={onCheckIn}
+              disabled={isCheckInLoading}
+            >
+              {isCheckInLoading ? (
+                <ActivityIndicator color="#fff" size="small" />
+              ) : (
+                <Text style={styles.buttonText}>Check In</Text>
+              )}
             </TouchableOpacity>
           )}
         </View>
@@ -149,14 +170,20 @@ export const CheckInOutCard: React.FC<CheckInOutCardProps> = ({
               style={[
                 styles.button,
                 styles.checkOutButton,
-                !currentDayCheckedIn && styles.buttonDisabled,
+                (!currentDayCheckedIn || isCheckOutLoading) && styles.buttonDisabled,
               ]}
               onPress={onCheckOut}
-              disabled={!currentDayCheckedIn}
+              disabled={!currentDayCheckedIn || isCheckOutLoading}
             >
-              <Text style={[styles.buttonText, !currentDayCheckedIn && styles.buttonTextDisabled]}>
-                Check Out
-              </Text>
+              {isCheckOutLoading ? (
+                <ActivityIndicator color="#fff" size="small" />
+              ) : (
+                <Text
+                  style={[styles.buttonText, !currentDayCheckedIn && styles.buttonTextDisabled]}
+                >
+                  Check Out
+                </Text>
+              )}
             </TouchableOpacity>
           )}
         </View>

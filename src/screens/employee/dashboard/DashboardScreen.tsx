@@ -23,13 +23,25 @@ import { RootState } from '../../../redux/store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { USER_INFO } from '../../../constants/StaticData';
 import { UserType } from '../../../constants/types';
-import { useGetHolidaysQuery } from '../../../redux/api/dashboard.api';
+import {
+  useGetHolidaysQuery,
+  useCheckInMutation,
+  useCheckOutMutation,
+} from '../../../redux/api/dashboard.api';
 
 export const DashboardScreen = () => {
   const dispatch = useDispatch();
+  const authUser = useSelector((state: RootState) => state.auth.user);
   const { checkInOutRecords, currentDayCheckedIn, currentDayCheckedOut, announcements, holidays } =
     useSelector((state: RootState) => state.dashboard);
   const [user, setUser] = useState<UserType | null>(null);
+  const [checkInLoading, setCheckInLoading] = useState(false);
+  const [checkOutLoading, setCheckOutLoading] = useState(false);
+  const [todayAttendanceId, setTodayAttendanceId] = useState<string | null>(null);
+
+  // API mutations
+  const [checkInMutation] = useCheckInMutation();
+  const [checkOutMutation] = useCheckOutMutation();
 
   // Fetch holidays from API
   const { data: holidaysData, isLoading: holidaysLoading } = useGetHolidaysQuery(undefined);
@@ -158,37 +170,90 @@ export const DashboardScreen = () => {
     }
   }, [holidaysData, dispatch]);
 
-  const handleCheckIn = () => {
-    const now = new Date();
-    const time = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-
-    dispatch(
-      checkIn({
-        date: today,
-        time,
-      })
-    );
-
-    Alert.alert('Success', `Checked in at ${time}`, [{ text: 'OK' }]);
-  };
-
-  const handleCheckOut = () => {
-    if (!currentDayCheckedIn) {
-      Alert.alert('Error', 'Please check in first before checking out', [{ text: 'OK' }]);
+  const handleCheckIn = async () => {
+    if (!user?.employeeId) {
+      Alert.alert('Error', 'User information not found. Please login again.', [{ text: 'OK' }]);
       return;
     }
 
-    const now = new Date();
-    const time = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    setCheckInLoading(true);
+    try {
+      const now = new Date();
+      const time = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
-    dispatch(
-      checkOut({
-        date: today,
-        time,
-      })
-    );
+      const response = await checkInMutation({
+        employeeId: user?.employeeId,
+        attendanceType: 'present',
+      }).unwrap();
 
-    Alert.alert('Success', `Checked out at ${time}`, [{ text: 'OK' }]);
+      console.log('Check-in response:', response);
+      if (response?.data?.id) {
+        setTodayAttendanceId(response.data.id);
+      }
+
+      // Extract date and time from API response
+      const checkInDateTime = new Date(response.data.checkInAt);
+      const apiDate = checkInDateTime.toISOString().split('T')[0];
+      const apiTime = `${String(checkInDateTime.getHours()).padStart(2, '0')}:${String(checkInDateTime.getMinutes()).padStart(2, '0')}:${String(checkInDateTime.getSeconds()).padStart(2, '0')}`;
+
+      dispatch(
+        checkIn({
+          date: apiDate,
+          time: apiTime,
+        })
+      );
+
+      Alert.alert('Success', `Checked in at ${apiTime}`, [{ text: 'OK' }]);
+    } catch (error: any) {
+      console.error('Check-in failed:', error);
+      Alert.alert('Error', error?.data?.message || 'Failed to check in. Please try again.', [
+        { text: 'OK' },
+      ]);
+    } finally {
+      setCheckInLoading(false);
+    }
+  };
+
+  const handleCheckOut = async () => {
+    if (!todayAttendanceId) {
+      Alert.alert('Error', 'No active check-in found. Please check in first.', [{ text: 'OK' }]);
+      return;
+    }
+
+    setCheckOutLoading(true);
+    try {
+      const now = new Date();
+      const checkOutAt = now.toISOString();
+
+      const response = await checkOutMutation({
+        attendanceId: todayAttendanceId,
+        attendanceType: 'present',
+        checkOutAt,
+      }).unwrap();
+
+      console.log('Check-out response:', response);
+
+      // Extract date and time from API response
+      const checkOutDateTime = new Date(response.data.checkOutAt);
+      const apiDate = checkOutDateTime.toISOString().split('T')[0];
+      const apiTime = `${String(checkOutDateTime.getHours()).padStart(2, '0')}:${String(checkOutDateTime.getMinutes()).padStart(2, '0')}:${String(checkOutDateTime.getSeconds()).padStart(2, '0')}`;
+
+      dispatch(
+        checkOut({
+          date: apiDate,
+          time: apiTime,
+        })
+      );
+
+      Alert.alert('Success', 'Checked out successfully', [{ text: 'OK' }]);
+    } catch (error: any) {
+      console.error('Check-out failed:', error);
+      Alert.alert('Error', error?.data?.message || 'Failed to check out. Please try again.', [
+        { text: 'OK' },
+      ]);
+    } finally {
+      setCheckOutLoading(false);
+    }
   };
 
   const nowDate = new Date();
@@ -214,6 +279,8 @@ export const DashboardScreen = () => {
           currentCheckOutTime={todayRecord?.checkOutTime}
           onCheckIn={handleCheckIn}
           onCheckOut={handleCheckOut}
+          isCheckInLoading={checkInLoading}
+          isCheckOutLoading={checkOutLoading}
         />
 
         {/* Attendance Calendar */}

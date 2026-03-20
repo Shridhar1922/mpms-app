@@ -1,9 +1,11 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { USER_INFO } from '../../constants/StaticData';
 import {
   BASE_URL,
-  API_ENDPOINT_LOGIN,
-  API_ENDPOINT_REFRESH_TOKEN,
   API_ENDPOINT_HOLIDAYS,
+  API_ENDPOINT_CHECKIN,
+  API_ENDPOINT_CHECKOUT,
 } from '../apiTypes';
 
 export const dashboardApi = createApi({
@@ -13,6 +15,15 @@ export const dashboardApi = createApi({
     prepareHeaders: async (headers) => {
       headers.set('Accept', 'application/json');
       headers.set('Content-Type', 'application/json');
+
+      try {
+        const token = await AsyncStorage.getItem(USER_INFO.TOKEN);
+        if (token) {
+          headers.set('Authorization', `Bearer ${token}`);
+        }
+      } catch (error) {
+        console.warn('Failed to get token from storage', error);
+      }
 
       return headers;
     },
@@ -24,7 +35,24 @@ export const dashboardApi = createApi({
         method: 'GET',
       }),
     }),
+    checkIn: builder.mutation({
+      query: (data) => ({
+        url: API_ENDPOINT_CHECKIN,
+        method: 'POST',
+        body: data,
+      }),
+    }),
+    checkOut: builder.mutation({
+      query: (data) => ({
+        url: `${API_ENDPOINT_CHECKOUT}/${data.attendanceId}`,
+        method: 'PATCH',
+        body: {
+          attendanceType: data.attendanceType,
+          checkOutAt: data.checkOutAt,
+        },
+      }),
+    }),
   }),
 });
 
-export const { useGetHolidaysQuery } = dashboardApi;
+export const { useGetHolidaysQuery, useCheckInMutation, useCheckOutMutation } = dashboardApi;

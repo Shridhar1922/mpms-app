@@ -71,7 +71,10 @@ export const LogInScreen = () => {
         showToast('Log in successfully!', 'success');
         await AsyncStorage.setItem(USER_INFO.REFRESH, response.data.refreshToken);
         await AsyncStorage.setItem(USER_INFO.TOKEN, response.data.accessToken);
-        await AsyncStorage.setItem(USER_INFO.USER, JSON.stringify(response.data.user));
+        await AsyncStorage.setItem(
+          USER_INFO.USER,
+          JSON.stringify({ ...response.data.user, employeeId: response.data.employeeId })
+        );
         dispatch(setCredentials({ user: response.data.user, token: response.data.accessToken }));
         setLoading(false);
         navigation.navigate(Screens.Main.TABS, { screen: Screens.Main.DASHBOARD });

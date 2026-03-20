@@ -3,8 +3,10 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
-    "ios": "react-native run-ios",
+    "android:dev": "ENVFILE=.env.development npx react-native run-android --mode devDebug",
+    "build:android-dev": "cd android && ./gradlew assembleDevRelease",
+    "bundle:android-dev": "cd android && ./gradlew bundleDevRelease",
+    "ios:dev": "ENVFILE=.env.development npx react-native run-ios",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
     "format": "prettier --write .",
