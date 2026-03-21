@@ -26,4 +26,5 @@ export type UserType = {
   dateOfBirth: string | null;
   roles: Role[];
   employer: unknown | null;
+  employeeId?: string; // Add employeeId to UserType
 };

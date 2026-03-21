@@ -5,6 +5,8 @@ import { LogInScreen } from '../screens/auth/LogInScreen';
 import { Screens } from '../constants/Screens';
 import SplashScreen from '../screens/splash/SplashScreen';
 import { AppDrawerNavigation } from './AppDrawerNavigation';
+import EditProfileScreen from '../screens/employee/profile/EditProfileScreen/EditProfileScreen';
+import { AttendanceScreen } from '../screens/employee/attendance/AttendanceScreen';
 
 const Stack = createStackNavigator();
 
@@ -23,6 +25,8 @@ const MainStack = () => (
       />
       {/* <Stack.Screen name={Screens.Main.DASHBOARD} component={DashboardScreen} /> */}
       <Stack.Screen name={Screens.Main.TABS} component={AppDrawerNavigation} />
+      <Stack.Screen name={Screens.Main.EDIT_PROFILE} component={EditProfileScreen} />
+      <Stack.Screen name={Screens.Services.ATTENDANCE_REQUEST} component={AttendanceScreen} />
     </Stack.Navigator>
   </NavigationContainer>
 );

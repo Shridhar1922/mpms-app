@@ -21,8 +21,9 @@ export const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: moderateScale(15),
     fontFamily: FontFamily.FONT_FAMILY_PRIMARY_REGULAR,
-    fontSize: FontSize.S_10,
+    fontSize: FontSize.S_12,
     backgroundColor: Colors.white,
+    color: Colors.black,
   },
   inputError: {
     borderColor: Colors.error,

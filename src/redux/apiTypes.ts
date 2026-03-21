@@ -2,7 +2,11 @@ import Config from 'react-native-config';
 
 console.log('Config', Config);
 
-export const BASE_URL = 'http://72.60.103.242/api/';
+export const BASE_URL = Config.BASE_URL;
+console.log('BASE_URL..', BASE_URL);
 
-export const API_ENDPOINT_LOGIN = 'auth/login';
-export const API_ENDPOINT_REFRESH_TOKEN = 'auth/refresh';
+export const API_ENDPOINT_LOGIN = '/api/auth/login';
+export const API_ENDPOINT_REFRESH_TOKEN = '/api/auth/refresh';
+export const API_ENDPOINT_HOLIDAYS = '/api/holidays';
+export const API_ENDPOINT_CHECKIN = '/api/attendances';
+export const API_ENDPOINT_CHECKOUT = '/api/attendances';

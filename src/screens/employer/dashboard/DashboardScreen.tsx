@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { View, ScrollView, StyleSheet } from 'react-native';
 
 import { CommonStyles } from '../../../styles/commonStyles';
 import { CommonHeader } from '../../../components/commonHeader/CommonHeader';
@@ -8,7 +8,7 @@ import {
   NotificationList,
   NotificationItemType,
 } from '../../../components/dashboardComponents';
-import { moderateScale, scale, verticalScale } from '../../../styles/responsiveStyles';
+import { moderateScale, verticalScale } from '../../../styles/responsiveStyles';
 
 export const DashboardScreen = () => {
   const [stats, setStats] = useState({ total: 0, present: 0, absent: 0 });

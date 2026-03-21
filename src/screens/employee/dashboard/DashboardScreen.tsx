@@ -7,6 +7,7 @@ import {
   CheckInOutCard,
   AnnouncementsList,
   HolidaysList,
+  AttendanceCalendar,
 } from '../../../components/dashboardComponents';
 import {
   checkIn,
@@ -22,13 +23,29 @@ import { RootState } from '../../../redux/store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { USER_INFO } from '../../../constants/StaticData';
 import { UserType } from '../../../constants/types';
+import {
+  useGetHolidaysQuery,
+  useCheckInMutation,
+  useCheckOutMutation,
+} from '../../../redux/api/dashboard.api';
 
 export const DashboardScreen = () => {
   const dispatch = useDispatch();
+  const authUser = useSelector((state: RootState) => state.auth.user);
   const { checkInOutRecords, currentDayCheckedIn, currentDayCheckedOut, announcements, holidays } =
     useSelector((state: RootState) => state.dashboard);
   const [user, setUser] = useState<UserType | null>(null);
+  const [checkInLoading, setCheckInLoading] = useState(false);
+  const [checkOutLoading, setCheckOutLoading] = useState(false);
+  const [todayAttendanceId, setTodayAttendanceId] = useState<string | null>(null);
 
+  // API mutations
+  const [checkInMutation] = useCheckInMutation();
+  const [checkOutMutation] = useCheckOutMutation();
+
+  // Fetch holidays from API
+  const { data: holidaysData, isLoading: holidaysLoading } = useGetHolidaysQuery(undefined);
+  console.log('holidaysData...', holidaysData);
   // load user from AsyncStorage
   useEffect(() => {
     const loadUser = async () => {
@@ -76,49 +93,59 @@ export const DashboardScreen = () => {
         },
       ];
 
-      // Mock holidays
-      const mockHolidays: Holiday[] = [
-        {
-          id: '1',
-          name: 'Holi',
-          date: '2026-03-14',
-          description: 'Festival of Colors - Regional Holiday',
-        },
-        {
-          id: '2',
-          name: 'Good Friday',
-          date: '2026-04-10',
-          description: 'National Holiday',
-        },
-        {
-          id: '3',
-          name: 'Easter Monday',
-          date: '2026-04-13',
-          description: 'Regional Holiday',
-        },
-        {
-          id: '4',
-          name: 'Eid ul-Fitr',
-          date: '2026-04-02',
-          description: 'Islamic Holiday',
-        },
-        {
-          id: '5',
-          name: 'Labour Day',
-          date: '2026-05-01',
-          description: 'National Holiday',
-        },
-      ];
-
       // Mock check-in/check-out records for past days
       const mockRecords: CheckInOutRecord[] = [
-        { date: '2026-02-28', checkInTime: '09:15', checkOutTime: '18:30', status: 'checked-out' },
-        { date: '2026-03-01', checkInTime: '09:00', checkOutTime: '18:15', status: 'checked-out' },
-        { date: '2026-03-02', checkInTime: '09:30', checkOutTime: '19:00', status: 'checked-out' },
+        {
+          date: '2026-02-28',
+          checkInTime: '09:15',
+          checkOutTime: '18:30',
+          status: 'checked-out',
+          attendanceStatus: 'present',
+        },
+        {
+          date: '2026-03-01',
+          checkInTime: '09:00',
+          checkOutTime: '18:15',
+          status: 'checked-out',
+          attendanceStatus: 'present',
+        },
+        {
+          date: '2026-03-02',
+          checkInTime: '09:30',
+          checkOutTime: '19:00',
+          status: 'checked-out',
+          attendanceStatus: 'present',
+        },
+        {
+          date: '2026-03-03',
+          status: 'absent',
+          attendanceStatus: 'absent',
+        },
+        {
+          date: '2026-03-04',
+          checkInTime: '10:00',
+          checkOutTime: '14:00',
+          status: 'checked-out',
+          attendanceStatus: 'half-day',
+        },
+        {
+          date: '2026-03-07',
+          status: 'absent',
+          attendanceStatus: 'weekly-off',
+        },
+        {
+          date: '2026-03-11',
+          status: 'absent',
+          attendanceStatus: 'leave',
+        },
+        {
+          date: '2026-03-12',
+          status: 'absent',
+          attendanceStatus: 'leave',
+        },
       ];
 
       dispatch(setAnnouncements(mockAnnouncements));
-      dispatch(setHolidays(mockHolidays));
 
       // Add mock records to Redux
       mockRecords.forEach((record) => {
@@ -129,37 +156,105 @@ export const DashboardScreen = () => {
     loadMockData();
   }, [dispatch]);
 
-  const handleCheckIn = () => {
-    const now = new Date();
-    const time = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+  // Load holidays from API
+  useEffect(() => {
+    if (holidaysData?.data?.items.length > 0) {
+      // Transform API data to match Holiday interface
+      const transformedHolidays = holidaysData?.data?.items.map((holiday: any) => ({
+        id: holiday.id || Math.random().toString(),
+        name: holiday.name || '',
+        date: holiday.date || '',
+        description: holiday.description || '',
+      }));
+      console.log('Transformed Holidays...', transformedHolidays);
+      dispatch(setHolidays(transformedHolidays));
+    }
+  }, [holidaysData, dispatch]);
 
-    dispatch(
-      checkIn({
-        date: today,
-        time,
-      })
-    );
-
-    Alert.alert('Success', `Checked in at ${time}`, [{ text: 'OK' }]);
-  };
-
-  const handleCheckOut = () => {
-    if (!currentDayCheckedIn) {
-      Alert.alert('Error', 'Please check in first before checking out', [{ text: 'OK' }]);
+  const handleCheckIn = async () => {
+    if (!user?.employeeId) {
+      Alert.alert('Error', 'User information not found. Please login again.', [{ text: 'OK' }]);
       return;
     }
 
-    const now = new Date();
-    const time = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    setCheckInLoading(true);
+    try {
+      const now = new Date();
+      const time = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
-    dispatch(
-      checkOut({
-        date: today,
-        time,
-      })
-    );
+      const response = await checkInMutation({
+        employeeId: user?.employeeId,
+        attendanceType: 'present',
+      }).unwrap();
 
-    Alert.alert('Success', `Checked out at ${time}`, [{ text: 'OK' }]);
+      console.log('Check-in response:', response);
+      if (response?.data?.id) {
+        setTodayAttendanceId(response.data.id);
+      }
+
+      // Extract date and time from API response
+      const checkInDateTime = new Date(response.data.checkInAt);
+      const apiDate = checkInDateTime.toISOString().split('T')[0];
+      const apiTime = `${String(checkInDateTime.getHours()).padStart(2, '0')}:${String(checkInDateTime.getMinutes()).padStart(2, '0')}:${String(checkInDateTime.getSeconds()).padStart(2, '0')}`;
+
+      dispatch(
+        checkIn({
+          date: apiDate,
+          time: apiTime,
+        })
+      );
+
+      Alert.alert('Success', `Checked in at ${apiTime}`, [{ text: 'OK' }]);
+    } catch (error: any) {
+      console.error('Check-in failed:', error);
+      Alert.alert('Error', error?.data?.message || 'Failed to check in. Please try again.', [
+        { text: 'OK' },
+      ]);
+    } finally {
+      setCheckInLoading(false);
+    }
+  };
+
+  const handleCheckOut = async () => {
+    if (!todayAttendanceId) {
+      Alert.alert('Error', 'No active check-in found. Please check in first.', [{ text: 'OK' }]);
+      return;
+    }
+
+    setCheckOutLoading(true);
+    try {
+      const now = new Date();
+      const checkOutAt = now.toISOString();
+
+      const response = await checkOutMutation({
+        attendanceId: todayAttendanceId,
+        attendanceType: 'present',
+        checkOutAt,
+      }).unwrap();
+
+      console.log('Check-out response:', response);
+
+      // Extract date and time from API response
+      const checkOutDateTime = new Date(response.data.checkOutAt);
+      const apiDate = checkOutDateTime.toISOString().split('T')[0];
+      const apiTime = `${String(checkOutDateTime.getHours()).padStart(2, '0')}:${String(checkOutDateTime.getMinutes()).padStart(2, '0')}:${String(checkOutDateTime.getSeconds()).padStart(2, '0')}`;
+
+      dispatch(
+        checkOut({
+          date: apiDate,
+          time: apiTime,
+        })
+      );
+
+      Alert.alert('Success', 'Checked out successfully', [{ text: 'OK' }]);
+    } catch (error: any) {
+      console.error('Check-out failed:', error);
+      Alert.alert('Error', error?.data?.message || 'Failed to check out. Please try again.', [
+        { text: 'OK' },
+      ]);
+    } finally {
+      setCheckOutLoading(false);
+    }
   };
 
   const nowDate = new Date();
@@ -185,6 +280,15 @@ export const DashboardScreen = () => {
           currentCheckOutTime={todayRecord?.checkOutTime}
           onCheckIn={handleCheckIn}
           onCheckOut={handleCheckOut}
+          isCheckInLoading={checkInLoading}
+          isCheckOutLoading={checkOutLoading}
+        />
+
+        {/* Attendance Calendar */}
+        <AttendanceCalendar
+          checkInOutRecords={checkInOutRecords}
+          holidays={holidays}
+          todayDate={today}
         />
 
         {/* Announcements List */}
