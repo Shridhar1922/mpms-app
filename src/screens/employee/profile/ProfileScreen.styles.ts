@@ -11,7 +11,7 @@ export const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     backgroundColor: Colors.primary,
-    paddingVertical: moderateScale(40),
+    paddingBottom: moderateScale(40),
   },
 
   avatar: {
@@ -19,7 +19,6 @@ export const styles = StyleSheet.create({
     height: scale(100),
     borderRadius: 100,
     marginBottom: moderateScale(10),
-    marginTop: moderateScale(40),
   },
 
   name: {
@@ -72,8 +71,6 @@ export const styles = StyleSheet.create({
     backgroundColor: Colors.white,
     marginHorizontal: moderateScale(20),
     marginTop: moderateScale(20),
-    borderRadius: moderateScale(12),
-    elevation: 2,
   },
 
   sectionTitle: {

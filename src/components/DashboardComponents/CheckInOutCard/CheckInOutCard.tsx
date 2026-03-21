@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, ActivityIndicator, Animated } from 'react-native';
 import { styles } from './CheckInOutCard.styles';
 
 interface CheckInOutCardProps {
@@ -18,13 +18,25 @@ interface CheckInOutCardProps {
 }
 
 // helper to compute duration between two HH:mm:ss strings
-const getDuration = (start: string, end: string) => {
-  const [sh, sm, ss = '0'] = start.split(':').map(Number);
-  const [eh, em, es = '0'] = end.split(':').map(Number);
+const getDuration = (start: string, end: string): string => {
+  const parseParts = (timeStr: string) => {
+    const parts = timeStr.split(':').map(Number);
+    return {
+      h: parts[0] || 0,
+      m: parts[1] || 0,
+      s: parts[2] || 0,
+    };
+  };
+
+  const startParts = parseParts(start);
+  const endParts = parseParts(end);
+
   const startDate = new Date();
-  startDate.setHours(sh, sm, ss, 0);
+  startDate.setHours(startParts.h, startParts.m, startParts.s, 0);
+
   const endDate = new Date();
-  endDate.setHours(eh, em, es, 0);
+  endDate.setHours(endParts.h, endParts.m, endParts.s, 0);
+
   let diff = (endDate.getTime() - startDate.getTime()) / 1000;
   if (diff < 0) diff += 24 * 3600; // wrap around midnight
   const h = Math.floor(diff / 3600);
@@ -58,15 +70,39 @@ export const CheckInOutCard: React.FC<CheckInOutCardProps> = ({
 
   const [elapsed, setElapsed] = React.useState('00:00:00');
   const [elapsedSeconds, setElapsedSeconds] = React.useState(0);
+  const checkInTimeRef = React.useRef<string | undefined>(currentCheckInTime);
+  const fillProgress = React.useRef(new Animated.Value(0)).current;
+
+  console.log('fillProgress...', fillProgress);
+  React.useEffect(() => {
+    checkInTimeRef.current = currentCheckInTime;
+  }, [currentCheckInTime]);
+
+  // Start 9-hour fill animation when checked in
+  React.useEffect(() => {
+    if (currentDayCheckedIn && !currentDayCheckedOut) {
+      fillProgress.setValue(0);
+      Animated.timing(fillProgress, {
+        toValue: 1,
+        duration: 9 * 60 * 60 * 1000, // 9 hours in milliseconds
+        useNativeDriver: false,
+      }).start();
+    } else {
+      fillProgress.setValue(0);
+    }
+  }, [currentDayCheckedIn, currentDayCheckedOut]);
 
   React.useEffect(() => {
     let interval: ReturnType<typeof setInterval> | null = null;
-    if (currentDayCheckedIn && !currentDayCheckedOut && currentCheckInTime) {
+    if (currentDayCheckedIn && !currentDayCheckedOut) {
       // Initialize elapsed seconds from the actual check-in time
       const initializeElapsed = () => {
+        const checkInTime = checkInTimeRef.current;
+        if (!checkInTime) return;
+
         const now = new Date();
         const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
-        const duration = getDuration(currentCheckInTime, currentTime);
+        const duration = getDuration(checkInTime, currentTime);
         const [h, m, s] = duration.split(':').map(Number);
         const totalSeconds = h * 3600 + m * 60 + s;
         setElapsedSeconds(totalSeconds);
@@ -76,9 +112,12 @@ export const CheckInOutCard: React.FC<CheckInOutCardProps> = ({
       initializeElapsed();
 
       const updateElapsed = () => {
+        const checkInTime = checkInTimeRef.current;
+        if (!checkInTime) return;
+
         const now = new Date();
         const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
-        const duration = getDuration(currentCheckInTime, currentTime);
+        const duration = getDuration(checkInTime, currentTime);
         setElapsed(duration);
       };
 
@@ -91,9 +130,9 @@ export const CheckInOutCard: React.FC<CheckInOutCardProps> = ({
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [currentDayCheckedIn, currentDayCheckedOut, currentCheckInTime]);
+  }, [currentDayCheckedIn, currentDayCheckedOut]);
 
-  const [hh, mm, ss] = elapsed.split(':');
+  const [hh, mm, ss] = elapsed.split(':') as [string, string, string];
 
   return (
     <View style={styles.card}>
@@ -116,8 +155,21 @@ export const CheckInOutCard: React.FC<CheckInOutCardProps> = ({
         </View>
       </View>
 
-      {/* separator line */}
-      <View style={styles.separatorLine} />
+      {/* separator line with 9-hour fill animation */}
+      <View style={styles.separatorLineContainer}>
+        <View style={styles.separatorLine} />
+        <Animated.View
+          style={[
+            styles.separatorLineFill,
+            {
+              width: fillProgress.interpolate({
+                inputRange: [0, 1],
+                outputRange: ['0%', '100%'],
+              }),
+            },
+          ]}
+        />
+      </View>
 
       {/* shift info */}
       {(shiftName || shiftTime) && (

@@ -29,7 +29,7 @@ export const AttendanceScreen = () => {
 
   return (
     <View style={[CommonStyles.container]}>
-      <CommonHeader title="Attendance" />
+      <CommonHeader title="Attendance" showBackBtn={true} />
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Custom Stats Display */}
         <View style={styles.statsContainer}>

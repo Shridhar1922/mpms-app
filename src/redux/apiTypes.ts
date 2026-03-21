@@ -2,7 +2,7 @@ import Config from 'react-native-config';
 
 console.log('Config', Config);
 
-export const BASE_URL = Config.API_URL;
+export const BASE_URL = Config.BASE_URL;
 console.log('BASE_URL..', BASE_URL);
 
 export const API_ENDPOINT_LOGIN = '/api/auth/login';

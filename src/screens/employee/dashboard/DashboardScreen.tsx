@@ -45,7 +45,7 @@ export const DashboardScreen = () => {
 
   // Fetch holidays from API
   const { data: holidaysData, isLoading: holidaysLoading } = useGetHolidaysQuery(undefined);
-
+  console.log('holidaysData...', holidaysData);
   // load user from AsyncStorage
   useEffect(() => {
     const loadUser = async () => {
@@ -166,6 +166,7 @@ export const DashboardScreen = () => {
         date: holiday.date || '',
         description: holiday.description || '',
       }));
+      console.log('Transformed Holidays...', transformedHolidays);
       dispatch(setHolidays(transformedHolidays));
     }
   }, [holidaysData, dispatch]);

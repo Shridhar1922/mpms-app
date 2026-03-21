@@ -5,7 +5,8 @@ import { FontFamily } from '../../../../styles/typography';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingVertical: moderateScale(60),
+    backgroundColor: Colors.primary,
+    paddingBottom: moderateScale(100),
   },
   scrollContainer: {
     // flex: 1,
@@ -26,30 +27,43 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     alignItems: 'center',
-    marginBottom: moderateScale(20),
+    paddingVertical: moderateScale(30),
+    // marginBottom: moderateScale(20),
   },
   profileImage: {
     width: scale(100),
     height: scale(100),
-    borderRadius: 50,
+    borderRadius: 100,
     backgroundColor: Colors.offwhite,
   },
   placeholderImage: {
     width: scale(100),
     height: scale(100),
-    borderRadius: 50,
+    borderRadius: 100,
     backgroundColor: Colors.white,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  editIconStyle: {
+    width: scale(24),
+    height: scale(24),
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    borderRadius: scale(12),
+    backgroundColor: Colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   editImageText: {
     marginTop: moderateScale(8),
-    color: '#007bff',
+    color: Colors.white,
     fontWeight: 'bold',
     textAlign: 'center',
   },
   section: {
     marginBottom: moderateScale(20),
+    paddingHorizontal: moderateScale(15),
   },
   label: {
     fontFamily: FontFamily.FONT_FAMILY_PRIMARY_REGULAR,
@@ -74,8 +88,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
   },
   addressInput: {
-    minHeight: 60,
-    maxHeight: 120,
+    minHeight: scale(80),
+    maxHeight: scale(120),
   },
   saveButton: {
     backgroundColor: Colors.primary,
@@ -99,7 +113,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
     padding: moderateScale(16),
     borderTopWidth: moderateScale(1),
-    borderTopColor: Colors.lightgray,
+    borderTopColor: Colors.offwhite,
     zIndex: 10,
   },
 });

@@ -3,11 +3,13 @@ import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { styles } from './ProfileScreen.styles';
 import { quickActions } from '../../../constants/ProfileData';
 import { Screens } from '../../../constants/Screens';
+import { CommonHeader } from '../../../components/commonHeader/CommonHeader';
 
 export const ProfileScreen = ({ navigation }: { navigation: any }) => {
   return (
     <View style={styles.container}>
       {/* HEADER */}
+      <CommonHeader />
       <View style={styles.header}>
         <Image source={{ uri: 'https://i.pravatar.cc/150?img=8' }} style={styles.avatar} />
 

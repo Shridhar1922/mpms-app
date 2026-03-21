@@ -138,9 +138,23 @@ export const styles = StyleSheet.create({
     fontFamily: FontFamily.FONT_FAMILY_PRIMARY_MEDIUM,
     color: Colors.grey[500],
   },
-  separatorLine: {
+  separatorLineContainer: {
+    position: 'relative',
     height: verticalScale(5),
     backgroundColor: Colors.gainsboro,
     marginVertical: verticalScale(12),
+    borderRadius: moderateScale(2),
+    overflow: 'hidden',
+  },
+  separatorLine: {
+    position: 'absolute',
+    height: '100%',
+    backgroundColor: Colors.gainsboro,
+  },
+  separatorLineFill: {
+    position: 'absolute',
+    height: '100%',
+    backgroundColor: Colors.primary,
+    borderRadius: moderateScale(2),
   },
 });

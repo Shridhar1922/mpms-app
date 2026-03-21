@@ -14,6 +14,8 @@ import {
   Platform as RNPlatform,
 } from 'react-native';
 import styles from './styles';
+import { CommonHeader } from '../../../../components/commonHeader/CommonHeader';
+import Images from '../../../../constants/Images';
 
 interface EditProfileScreenProps {
   employeeId: string;
@@ -72,6 +74,7 @@ const EditProfileScreen: React.FC<Partial<EditProfileScreenProps>> = (props) => 
       behavior={RNPlatform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={80}
     >
+      <CommonHeader title="Edit Profile" showBackBtn={true} />
       <View style={styles.container}>
         <View style={styles.imageContainer}>
           <TouchableOpacity onPress={handleImagePick}>
@@ -80,7 +83,7 @@ const EditProfileScreen: React.FC<Partial<EditProfileScreenProps>> = (props) => 
             ) : (
               <View style={styles.placeholderImage} />
             )}
-            <Text style={styles.editImageText}>Edit</Text>
+            <Image source={Images.editIcon} style={styles.editIconStyle} />
           </TouchableOpacity>
         </View>
 
