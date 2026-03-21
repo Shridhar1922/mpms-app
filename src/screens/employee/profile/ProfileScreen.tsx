@@ -4,6 +4,7 @@ import { styles } from './ProfileScreen.styles';
 import { quickActions } from '../../../constants/ProfileData';
 import { Screens } from '../../../constants/Screens';
 import { CommonHeader } from '../../../components/commonHeader/CommonHeader';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const ProfileScreen = ({ navigation }: { navigation: any }) => {
   return (
@@ -103,7 +104,15 @@ export const ProfileScreen = ({ navigation }: { navigation: any }) => {
             <TouchableOpacity
               key={item.id}
               style={styles.actionBtn}
-              onPress={() => navigation.navigate(Screens.Main.EDIT_PROFILE)}
+              onPress={async () => {
+                if (item.title === 'Edit Profile') {
+                  navigation.navigate(Screens.Main.EDIT_PROFILE);
+                }
+                if (item.title === 'Logout') {
+                  await AsyncStorage.clear();
+                  navigation.navigate(Screens.Auth.LOGIN);
+                }
+              }}
             >
               <Image source={item.icon} style={styles.icon} resizeMode="contain" />
               <Text style={styles.actionText}>{item.title}</Text>

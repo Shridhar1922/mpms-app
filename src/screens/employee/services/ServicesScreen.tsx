@@ -34,7 +34,11 @@ export const ServicesScreen = ({ navigation }: { navigation: any }) => {
               <View>
                 <TouchableOpacity
                   style={styles.serviceButton}
-                  onPress={() => navigation.navigate(Screens.Services.ATTENDANCE_REQUEST)}
+                  onPress={() => {
+                    if (item.title === 'Attendance') {
+                      navigation.navigate(Screens.Services.ATTENDANCE_REQUEST);
+                    }
+                  }}
                 >
                   <Image source={item.icon} style={styles.icon} resizeMode="contain" />
                   <Text style={styles.title}>{item.title}</Text>
