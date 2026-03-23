@@ -15,9 +15,8 @@ import {
   setAnnouncements,
   setHolidays,
   addCheckInOutRecord,
-  type CheckInOutRecord,
-  type Announcement,
-  type Holiday,
+  CheckInOutRecord,
+  Announcement,
 } from '../../../redux/slices/dashboardSlice';
 import { RootState } from '../../../redux/store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -25,13 +24,13 @@ import { USER_INFO } from '../../../constants/StaticData';
 import { UserType } from '../../../constants/types';
 import {
   useGetHolidaysQuery,
+  useLazyGetTodayAttendanceQuery,
   useCheckInMutation,
   useCheckOutMutation,
 } from '../../../redux/api/dashboard.api';
 
 export const DashboardScreen = () => {
   const dispatch = useDispatch();
-  const authUser = useSelector((state: RootState) => state.auth.user);
   const { checkInOutRecords, currentDayCheckedIn, currentDayCheckedOut, announcements, holidays } =
     useSelector((state: RootState) => state.dashboard);
   const [user, setUser] = useState<UserType | null>(null);
@@ -42,27 +41,74 @@ export const DashboardScreen = () => {
   // API mutations
   const [checkInMutation] = useCheckInMutation();
   const [checkOutMutation] = useCheckOutMutation();
+  const [getTodayAttendance, { data: todayAttendanceData }] = useLazyGetTodayAttendanceQuery();
+
+  // Get today's date for the API call
+  const today = new Date().toISOString().split('T')[0];
 
   // Fetch holidays from API
-  const { data: holidaysData, isLoading: holidaysLoading } = useGetHolidaysQuery(undefined);
-  console.log('holidaysData...', holidaysData);
-  // load user from AsyncStorage
+  const { data: holidaysData } = useGetHolidaysQuery(undefined);
+  // load user from AsyncStorage and fetch attendance
   useEffect(() => {
     const loadUser = async () => {
       try {
         const json = await AsyncStorage.getItem(USER_INFO.USER);
         if (json) {
-          setUser(JSON.parse(json));
+          const userData = JSON.parse(json);
+          setUser(userData);
+          // Fetch attendance after user is loaded
+          if (userData?.employeeId) {
+            await getTodayAttendance({
+              employeeId: userData.employeeId,
+              date: new Date().toISOString(),
+            });
+          }
         }
       } catch (e) {
         console.warn('Failed to load user from storage', e);
       }
     };
     loadUser();
-  }, []);
+  }, [getTodayAttendance]);
   console.log('user.....', user);
-  // Get today's record
-  const today = new Date().toISOString().split('T')[0];
+
+  // Process today's attendance data from API
+  useEffect(() => {
+    if (todayAttendanceData) {
+      const attendance = todayAttendanceData?.data;
+
+      if (attendance.id) {
+        setTodayAttendanceId(attendance.id);
+      }
+
+      // Extract checkInAt time if exists
+      if (attendance.checkInAt) {
+        const checkInDateTime = new Date(attendance.checkInAt);
+        const checkInTime = `${String(checkInDateTime.getHours()).padStart(2, '0')}:${String(checkInDateTime.getMinutes()).padStart(2, '0')}:${String(checkInDateTime.getSeconds()).padStart(2, '0')}`;
+
+        dispatch(
+          checkIn({
+            date: today,
+            time: checkInTime,
+          })
+        );
+      }
+
+      // Extract checkOutAt time if exists
+      if (attendance.checkOutAt) {
+        const checkOutDateTime = new Date(attendance.checkOutAt);
+        const checkOutTime = `${String(checkOutDateTime.getHours()).padStart(2, '0')}:${String(checkOutDateTime.getMinutes()).padStart(2, '0')}:${String(checkOutDateTime.getSeconds()).padStart(2, '0')}`;
+
+        dispatch(
+          checkOut({
+            date: today,
+            time: checkOutTime,
+          })
+        );
+      }
+    }
+  }, [todayAttendanceData, dispatch, today]);
+
   const todayRecord = checkInOutRecords.find((record) => record.date === today);
 
   // Load mock data on component mount
@@ -179,9 +225,6 @@ export const DashboardScreen = () => {
 
     setCheckInLoading(true);
     try {
-      const now = new Date();
-      const time = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-
       const response = await checkInMutation({
         employeeId: user?.employeeId,
         attendanceType: 'present',

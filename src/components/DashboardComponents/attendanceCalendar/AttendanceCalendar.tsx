@@ -40,7 +40,7 @@ const getStatusColor = (status: AttendanceStatus | undefined, isHoliday: boolean
 const getStatusLabel = (record: CheckInOutRecord | undefined, isHoliday: boolean): string => {
   if (isHoliday) return 'Holiday';
   if (!record) return '';
-
+  console.log('Determining status label for record:', record);
   switch (record.attendanceStatus) {
     case 'present':
       return 'Present';
@@ -142,6 +142,7 @@ export const AttendanceCalendar: React.FC<AttendanceCalendarProps> = ({
   const renderDayCell = ({ item }: { item: CalendarDay }) => {
     const statusColor = getStatusColor(item.record?.attendanceStatus, item.isHoliday);
     const statusLabel = getStatusLabel(item.record, item.isHoliday);
+    console.log('Rendering day cell for date:', item, 'Status:', statusLabel);
 
     return (
       <View style={[styles.dayCell, item.isToday && styles.todayCell]}>

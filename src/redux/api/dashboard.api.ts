@@ -35,6 +35,14 @@ export const dashboardApi = createApi({
         method: 'GET',
       }),
     }),
+    getTodayAttendance: builder.query({
+      query: ({ employeeId, date }) => {
+        return {
+          url: `${API_ENDPOINT_CHECKIN}/${employeeId}?date=${date}`,
+          method: 'GET',
+        };
+      },
+    }),
     checkIn: builder.mutation({
       query: (data) => ({
         url: API_ENDPOINT_CHECKIN,
@@ -55,4 +63,10 @@ export const dashboardApi = createApi({
   }),
 });
 
-export const { useGetHolidaysQuery, useCheckInMutation, useCheckOutMutation } = dashboardApi;
+export const {
+  useGetHolidaysQuery,
+  useGetTodayAttendanceQuery,
+  useLazyGetTodayAttendanceQuery,
+  useCheckInMutation,
+  useCheckOutMutation,
+} = dashboardApi;

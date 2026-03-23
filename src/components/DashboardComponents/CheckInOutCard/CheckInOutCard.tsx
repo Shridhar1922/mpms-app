@@ -94,7 +94,15 @@ export const CheckInOutCard: React.FC<CheckInOutCardProps> = ({
 
   React.useEffect(() => {
     let interval: ReturnType<typeof setInterval> | null = null;
-    if (currentDayCheckedIn && !currentDayCheckedOut) {
+
+    // If checked out, show the total duration worked
+    if (currentDayCheckedOut && currentCheckInTime && currentCheckOutTime) {
+      const duration = getDuration(currentCheckInTime, currentCheckOutTime);
+      setElapsed(duration);
+      const [h, m, s] = duration.split(':').map(Number);
+      const totalSeconds = h * 3600 + m * 60 + s;
+      setElapsedSeconds(totalSeconds);
+    } else if (currentDayCheckedIn && !currentDayCheckedOut) {
       // Initialize elapsed seconds from the actual check-in time
       const initializeElapsed = () => {
         const checkInTime = checkInTimeRef.current;
@@ -130,7 +138,7 @@ export const CheckInOutCard: React.FC<CheckInOutCardProps> = ({
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [currentDayCheckedIn, currentDayCheckedOut]);
+  }, [currentDayCheckedIn, currentDayCheckedOut, currentCheckInTime, currentCheckOutTime]);
 
   const [hh, mm, ss] = elapsed.split(':') as [string, string, string];
 
