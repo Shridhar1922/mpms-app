@@ -77,19 +77,38 @@ export const CheckInOutCard: React.FC<CheckInOutCardProps> = ({
     checkInTimeRef.current = currentCheckInTime;
   }, [currentCheckInTime]);
 
-  // Start 9-hour fill animation when checked in
+  // Sync fill animation with current elapsed time
   React.useEffect(() => {
-    if (currentDayCheckedIn && !currentDayCheckedOut) {
-      fillProgress.setValue(0);
-      Animated.timing(fillProgress, {
-        toValue: 1,
-        duration: 9 * 60 * 60 * 1000, // 9 hours in milliseconds
-        useNativeDriver: false,
-      }).start();
+    const totalSecs = 9 * 3600;
+
+    if (currentDayCheckedIn && !currentDayCheckedOut && currentCheckInTime) {
+      // Calculate how much time has already elapsed since check-in
+      const now = new Date();
+      const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+      const duration = getDuration(currentCheckInTime, currentTime);
+      const [h, m, s] = duration.split(':').map(Number);
+      const elapsedSecs = h * 3600 + m * 60 + s;
+      const initialProgress = Math.min(elapsedSecs / totalSecs, 1);
+      const remainingMs = Math.max((totalSecs - elapsedSecs) * 1000, 0);
+
+      fillProgress.setValue(initialProgress);
+      if (remainingMs > 0) {
+        Animated.timing(fillProgress, {
+          toValue: 1,
+          duration: remainingMs,
+          useNativeDriver: false,
+        }).start();
+      }
+    } else if (currentDayCheckedOut && currentCheckInTime && currentCheckOutTime) {
+      // Show final progress based on actual hours worked
+      const duration = getDuration(currentCheckInTime, currentCheckOutTime);
+      const [h, m, s] = duration.split(':').map(Number);
+      const workedSecs = h * 3600 + m * 60 + s;
+      fillProgress.setValue(Math.min(workedSecs / totalSecs, 1));
     } else {
       fillProgress.setValue(0);
     }
-  }, [currentDayCheckedIn, currentDayCheckedOut]);
+  }, [currentDayCheckedIn, currentDayCheckedOut, currentCheckInTime, currentCheckOutTime]);
 
   React.useEffect(() => {
     let interval: ReturnType<typeof setInterval> | null = null;
