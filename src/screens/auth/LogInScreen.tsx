@@ -65,9 +65,12 @@ export const LogInScreen = () => {
       setLoading(true);
       const response = await loginMutation(payload).unwrap();
 
-      console.log('response', response);
-
       if (response?.success) {
+        if (response?.data?.user?.roles[0].name == 'SUPER_ADMIN') {
+          showToast('Super admin cannot log in to the app', 'error');
+          setLoading(false);
+          return;
+        }
         showToast('Log in successfully!', 'success');
         await AsyncStorage.setItem(USER_INFO.REFRESH, response.data.refreshToken);
         await AsyncStorage.setItem(USER_INFO.TOKEN, response.data.accessToken);
@@ -81,10 +84,7 @@ export const LogInScreen = () => {
       }
     } catch (e: any) {
       setLoading(false);
-      console.log('====================================');
-      console.log('e', e);
-      console.log('====================================');
-      showToast(e.error, 'error');
+      showToast(e?.error || e?.data?.message || e?.message || 'An error occurred', 'error');
     }
   };
 

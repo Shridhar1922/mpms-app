@@ -16,11 +16,7 @@ const SplashScreen = () => {
   const initializeApp = useCallback(async () => {
     try {
       const refreshToken = await AsyncStorage.getItem(USER_INFO.REFRESH);
-      console.log('====================================');
-      console.log('refreshToken', refreshToken);
-      console.log('====================================');
       if (!refreshToken) {
-        console.log('inside if');
         navigation.navigate(Screens.Auth.LOGIN);
         return;
       }
@@ -29,7 +25,6 @@ const SplashScreen = () => {
         refreshToken,
       }).unwrap();
 
-      console.log('response refreshToken', response);
       if (response?.success) {
         await AsyncStorage.setItem(USER_INFO.REFRESH, response.data.refreshToken);
         await AsyncStorage.setItem(USER_INFO.TOKEN, response.data.accessToken);

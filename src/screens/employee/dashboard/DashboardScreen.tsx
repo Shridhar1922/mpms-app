@@ -70,7 +70,6 @@ export const DashboardScreen = () => {
     };
     loadUser();
   }, [getTodayAttendance]);
-  console.log('user.....', user);
 
   // Process today's attendance data from API
   useEffect(() => {
@@ -212,7 +211,7 @@ export const DashboardScreen = () => {
         date: holiday.date || '',
         description: holiday.description || '',
       }));
-      console.log('Transformed Holidays...', transformedHolidays);
+
       dispatch(setHolidays(transformedHolidays));
     }
   }, [holidaysData, dispatch]);
@@ -230,7 +229,6 @@ export const DashboardScreen = () => {
         attendanceType: 'present',
       }).unwrap();
 
-      console.log('Check-in response:', response);
       if (response?.data?.id) {
         setTodayAttendanceId(response.data.id);
       }
@@ -274,8 +272,6 @@ export const DashboardScreen = () => {
         attendanceType: 'present',
         checkOutAt,
       }).unwrap();
-
-      console.log('Check-out response:', response);
 
       // Extract date and time from API response
       const checkOutDateTime = new Date(response.data.checkOutAt);

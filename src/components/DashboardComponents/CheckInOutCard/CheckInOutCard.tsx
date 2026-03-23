@@ -73,7 +73,6 @@ export const CheckInOutCard: React.FC<CheckInOutCardProps> = ({
   const checkInTimeRef = React.useRef<string | undefined>(currentCheckInTime);
   const fillProgress = React.useRef(new Animated.Value(0)).current;
 
-  console.log('fillProgress...', fillProgress);
   React.useEffect(() => {
     checkInTimeRef.current = currentCheckInTime;
   }, [currentCheckInTime]);

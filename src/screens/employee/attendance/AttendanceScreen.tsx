@@ -3,18 +3,12 @@ import React from 'react';
 import { CommonStyles } from '../../../styles/commonStyles';
 import { CommonHeader } from '../../../components/commonHeader/CommonHeader';
 import { AttendanceCalendar } from '../../../components/dashboardComponents';
-import {
-  type CheckInOutRecord,
-  type Announcement,
-  type Holiday,
-} from '../../../redux/slices/dashboardSlice';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
 import { styles } from './AttendanceScreen.styles';
 
 export const AttendanceScreen = () => {
-  const { checkInOutRecords, currentDayCheckedIn, currentDayCheckedOut, announcements, holidays } =
-    useSelector((state: RootState) => state.dashboard);
+  const { checkInOutRecords, holidays } = useSelector((state: RootState) => state.dashboard);
 
   // Get today's record
   const today = new Date().toISOString().split('T')[0];

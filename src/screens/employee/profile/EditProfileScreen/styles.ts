@@ -3,6 +3,28 @@ import { moderateScale, scale, textScale } from '../../../../styles/responsiveSt
 import { Colors } from '../../../../styles/colors';
 import { FontFamily } from '../../../../styles/typography';
 const styles = StyleSheet.create({
+  keyboardAvoidingView: {
+    flex: 1,
+  },
+  datePickerModalOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0,0,0,0.3)',
+  },
+  datePickerModalContent: {
+    backgroundColor: Colors.white,
+    margin: moderateScale(20),
+    borderRadius: moderateScale(10),
+    padding: moderateScale(16),
+  },
+  datePickerDoneButton: {
+    marginTop: moderateScale(10),
+    alignItems: 'center',
+  },
+  datePickerDoneButtonText: {
+    color: Colors.primary,
+    fontWeight: 'bold',
+  },
   container: {
     flex: 1,
     backgroundColor: Colors.primary,
