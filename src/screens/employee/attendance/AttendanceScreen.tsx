@@ -1,14 +1,34 @@
 import { View, Text, ScrollView } from 'react-native';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { CommonStyles } from '../../../styles/commonStyles';
 import { CommonHeader } from '../../../components/commonHeader/CommonHeader';
 import { AttendanceCalendar } from '../../../components/dashboardComponents';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
 import { styles } from './AttendanceScreen.styles';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { USER_INFO } from '../../../constants/StaticData';
+import { UserType } from '../../../constants/types';
 
 export const AttendanceScreen = () => {
   const { checkInOutRecords, holidays } = useSelector((state: RootState) => state.dashboard);
+  const [user, setUser] = useState<UserType | null>(null);
+
+  // Load user from AsyncStorage
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const json = await AsyncStorage.getItem(USER_INFO.USER);
+        if (json) {
+          const userData = JSON.parse(json);
+          setUser(userData);
+        }
+      } catch (e) {
+        console.warn('Failed to load user from storage', e);
+      }
+    };
+    loadUser();
+  }, []);
 
   // Get today's record
   const today = new Date().toISOString().split('T')[0];
@@ -52,6 +72,7 @@ export const AttendanceScreen = () => {
           checkInOutRecords={checkInOutRecords}
           holidays={holidays}
           todayDate={today}
+          employeeId={user?.employeeId || ''}
         />
       </ScrollView>
     </View>

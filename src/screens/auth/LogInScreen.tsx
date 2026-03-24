@@ -124,12 +124,6 @@ export const LogInScreen = () => {
         </View>
 
         <AppButton title="Login" onPress={handleLogin} loading={loading} />
-
-        <AppButton
-          title="Create Account"
-          variant="outline"
-          onPress={() => console.log('Navigate to Register')}
-        />
       </View>
     </View>
   );

@@ -37,6 +37,8 @@ export const ServicesScreen = ({ navigation }: { navigation: any }) => {
                   onPress={() => {
                     if (item.title === 'Attendance') {
                       navigation.navigate(Screens.Services.ATTENDANCE_REQUEST);
+                    } else if (item.title === 'Holiday') {
+                      navigation.navigate(Screens.Services.HOLIDAY);
                     }
                   }}
                 >

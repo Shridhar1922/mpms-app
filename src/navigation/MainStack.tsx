@@ -7,6 +7,7 @@ import SplashScreen from '../screens/splash/SplashScreen';
 import { AppDrawerNavigation } from './AppDrawerNavigation';
 import EditProfileScreen from '../screens/employee/profile/EditProfileScreen/EditProfileScreen';
 import { AttendanceScreen } from '../screens/employee/attendance/AttendanceScreen';
+import { HolidayScreen } from '../screens/employee/holiday/HolidayScreen';
 
 const Stack = createStackNavigator();
 
@@ -27,6 +28,7 @@ const MainStack = () => (
       <Stack.Screen name={Screens.Main.TABS} component={AppDrawerNavigation} />
       <Stack.Screen name={Screens.Main.EDIT_PROFILE} component={EditProfileScreen} />
       <Stack.Screen name={Screens.Services.ATTENDANCE_REQUEST} component={AttendanceScreen} />
+      <Stack.Screen name={Screens.Services.HOLIDAY} component={HolidayScreen} />
     </Stack.Navigator>
   </NavigationContainer>
 );

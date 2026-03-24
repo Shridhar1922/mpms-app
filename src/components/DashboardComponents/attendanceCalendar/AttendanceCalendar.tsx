@@ -3,11 +3,14 @@ import { View, Text, FlatList } from 'react-native';
 import { styles } from './AttendanceCalendar.styles';
 import { AttendanceStatus, CheckInOutRecord } from '../../../redux/slices/dashboardSlice';
 import { Holiday } from '../../../redux/slices/dashboardSlice';
+import { useLazyGetAttendancesByMonthQuery } from '../../../redux/api/dashboard.api';
 
 interface AttendanceCalendarProps {
   checkInOutRecords: CheckInOutRecord[];
   holidays: Holiday[];
   todayDate?: string; // YYYY-MM-DD format
+  employeeId: string;
+  onMonthChange?: (records: CheckInOutRecord[]) => void;
 }
 
 interface CalendarDay {
@@ -61,9 +64,15 @@ export const AttendanceCalendar: React.FC<AttendanceCalendarProps> = ({
   checkInOutRecords,
   holidays,
   todayDate,
+  employeeId,
+  onMonthChange,
 }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [getAttendancesByMonth] = useLazyGetAttendancesByMonthQuery();
 
+  console.log('Rendering AttendanceCalendar with records:', checkInOutRecords);
+  console.log('Holidays:', holidays);
+  console.log('Today Date:', todayDate);
   const generateCalendarDays = (): CalendarDay[] => {
     const today = todayDate || new Date().toISOString().split('T')[0];
     const year = currentMonth.getFullYear();
@@ -79,14 +88,30 @@ export const AttendanceCalendar: React.FC<AttendanceCalendarProps> = ({
 
     const days: CalendarDay[] = [];
 
+    // Debug: Log holiday dates for this month
+    const holidayDatesForMonth = holidays.filter((h) => {
+      const hYear = parseInt(h.date.split('-')[0]);
+      const hMonth = parseInt(h.date.split('-')[1]);
+      return hYear === year && hMonth === month + 1;
+    });
+    if (holidayDatesForMonth.length > 0) {
+      console.log(
+        `Holidays in ${month + 1}/${year}:`,
+        holidayDatesForMonth.map((h) => h.date)
+      );
+    }
+
     // Previous month's days
+    const prevYear = month === 0 ? year - 1 : year;
+    const prevMonth = month === 0 ? 11 : month - 1;
     for (let i = firstDayOfWeek - 1; i >= 0; i--) {
-      const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(prevLastDate - i).padStart(2, '0')}`;
+      const dateStr = `${prevYear}-${String(prevMonth + 1).padStart(2, '0')}-${String(prevLastDate - i).padStart(2, '0')}`;
+      const isHoliday = holidays.some((h) => h.date === dateStr);
       days.push({
         date: dateStr,
         day: prevLastDate - i,
         isCurrentMonth: false,
-        isHoliday: false,
+        isHoliday,
         isToday: dateStr === today,
       });
     }
@@ -108,15 +133,18 @@ export const AttendanceCalendar: React.FC<AttendanceCalendarProps> = ({
     }
 
     // Next month's days
+    const nextYear = month === 11 ? year + 1 : year;
+    const nextMonth = month === 11 ? 0 : month + 1;
     const totalCells = 42; // 6 weeks * 7 days
     const remainingCells = totalCells - days.length;
     for (let date = 1; date <= remainingCells; date++) {
-      const dateStr = `${year}-${String(month + 2).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
+      const dateStr = `${nextYear}-${String(nextMonth + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
+      const isHoliday = holidays.some((h) => h.date === dateStr);
       days.push({
         date: dateStr,
         day: date,
         isCurrentMonth: false,
-        isHoliday: false,
+        isHoliday,
         isToday: dateStr === today,
       });
     }
@@ -131,12 +159,76 @@ export const AttendanceCalendar: React.FC<AttendanceCalendarProps> = ({
     year: 'numeric',
   });
 
-  const handlePrevMonth = () => {
-    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1));
+  const handlePrevMonth = async () => {
+    const prevMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1);
+    setCurrentMonth(prevMonth);
+    await fetchMonthAttendance(prevMonth);
   };
 
-  const handleNextMonth = () => {
-    setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1));
+  const handleNextMonth = async () => {
+    const nextMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1);
+    setCurrentMonth(nextMonth);
+    await fetchMonthAttendance(nextMonth);
+  };
+
+  const fetchMonthAttendance = async (date: Date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const lastDay = new Date(year, month, 0).getDate();
+
+    try {
+      const response = await getAttendancesByMonth({
+        employeeId,
+        year,
+        month,
+        limit: lastDay,
+      }).unwrap();
+
+      if (response?.data?.items && onMonthChange) {
+        const mapAttendanceType = (
+          type: string,
+          isSessionActive: boolean
+        ): { attendanceStatus: AttendanceStatus; status: CheckInOutRecord['status'] } => {
+          switch (type) {
+            case 'full_day':
+              return { attendanceStatus: 'present', status: 'checked-out' };
+            case 'half_day':
+              return { attendanceStatus: 'half-day', status: 'checked-out' };
+            case 'absent':
+              return { attendanceStatus: 'absent', status: 'absent' };
+            case 'present':
+            default:
+              return {
+                attendanceStatus: 'present',
+                status: isSessionActive ? 'checked-in' : 'checked-out',
+              };
+          }
+        };
+
+        const records: CheckInOutRecord[] = response.data.items.map((item: any) => {
+          const checkInDate = new Date(item.checkInAt);
+          const dateStr = checkInDate.toISOString().split('T')[0];
+          const checkInTime = `${String(checkInDate.getHours()).padStart(2, '0')}:${String(checkInDate.getMinutes()).padStart(2, '0')}:${String(checkInDate.getSeconds()).padStart(2, '0')}`;
+
+          let checkOutTime: string | undefined;
+          if (item.checkOutAt) {
+            const checkOutDate = new Date(item.checkOutAt);
+            checkOutTime = `${String(checkOutDate.getHours()).padStart(2, '0')}:${String(checkOutDate.getMinutes()).padStart(2, '0')}:${String(checkOutDate.getSeconds()).padStart(2, '0')}`;
+          }
+
+          const { attendanceStatus, status } = mapAttendanceType(
+            item.attendanceType,
+            item.isSessionActive
+          );
+
+          return { date: dateStr, checkInTime, checkOutTime, status, attendanceStatus };
+        });
+
+        onMonthChange(records);
+      }
+    } catch (error) {
+      console.error('Failed to fetch attendance for month:', error);
+    }
   };
 
   const renderDayCell = ({ item }: { item: CalendarDay }) => {
@@ -154,9 +246,9 @@ export const AttendanceCalendar: React.FC<AttendanceCalendarProps> = ({
         >
           {item.day}
         </Text>
-        {statusLabel && (
+        {(statusLabel || item.isHoliday) && (
           <View style={[styles.statusBadge, { backgroundColor: statusColor }]}>
-            <Text style={styles.statusLabel}>{statusLabel}</Text>
+            <Text style={styles.statusLabel}>{statusLabel || 'Holiday'}</Text>
           </View>
         )}
       </View>
