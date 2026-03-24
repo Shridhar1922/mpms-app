@@ -80,7 +80,10 @@ export const LogInScreen = () => {
         );
         dispatch(setCredentials({ user: response.data.user, token: response.data.accessToken }));
         setLoading(false);
-        navigation.navigate(Screens.Main.TABS, { screen: Screens.Main.DASHBOARD });
+        navigation.reset({
+          index: 0,
+          routes: [{ name: Screens.Main.TABS, params: { screen: Screens.Main.DASHBOARD } }],
+        });
       }
     } catch (e: any) {
       setLoading(false);

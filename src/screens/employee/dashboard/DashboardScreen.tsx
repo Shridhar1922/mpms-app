@@ -341,7 +341,7 @@ export const DashboardScreen = () => {
         {/* Announcements List */}
         {/* <AnnouncementsList announcements={announcements} /> */}
         {/* Upcoming Holidays */}
-        <HolidaysList holidays={holidays} />
+        <HolidaysList holidays={holidays} type="upcoming" />
       </ScrollView>
     </View>
   );

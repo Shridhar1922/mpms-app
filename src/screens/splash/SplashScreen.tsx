@@ -28,7 +28,10 @@ const SplashScreen = () => {
       if (response?.success) {
         await AsyncStorage.setItem(USER_INFO.REFRESH, response.data.refreshToken);
         await AsyncStorage.setItem(USER_INFO.TOKEN, response.data.accessToken);
-        navigation.navigate(Screens.Main.TABS, { screen: Screens.Main.DASHBOARD });
+        navigation.reset({
+          index: 0,
+          routes: [{ name: Screens.Main.TABS, params: { screen: Screens.Main.DASHBOARD } }],
+        });
       } else {
         navigation.navigate(Screens.Auth.LOGIN);
       }

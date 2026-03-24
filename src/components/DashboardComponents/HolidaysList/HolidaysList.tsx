@@ -6,6 +6,7 @@ import { styles } from './HolidaysList.styles';
 interface HolidaysListProps {
   holidays: Holiday[];
   loading?: boolean;
+  type?: 'all' | 'upcoming';
 }
 
 const HolidayItem: React.FC<{ item: Holiday }> = ({ item }) => {
@@ -35,7 +36,7 @@ const HolidayItem: React.FC<{ item: Holiday }> = ({ item }) => {
   );
 };
 
-export const HolidaysList: React.FC<HolidaysListProps> = ({ holidays }) => {
+export const HolidaysList: React.FC<HolidaysListProps> = ({ holidays, type = 'all' }) => {
   // Sort holidays by date
   const sortedHolidays = [...holidays].sort((a, b) => {
     const dateA = new Date(a.date).getTime();
@@ -43,19 +44,27 @@ export const HolidaysList: React.FC<HolidaysListProps> = ({ holidays }) => {
     return dateA - dateB;
   });
 
+  // Filter upcoming holidays if type is 'upcoming'
+  const filteredHolidays =
+    type === 'upcoming'
+      ? sortedHolidays.filter((holiday) => new Date(holiday.date) >= new Date())
+      : sortedHolidays;
+
+  const title = type === 'upcoming' ? 'Upcoming Holidays' : 'All Holidays';
+
   return (
     <View style={styles.card}>
       <View style={styles.header}>
-        <Text style={styles.cardTitle}>All Holidays</Text>
+        <Text style={styles.cardTitle}>{title}</Text>
       </View>
 
-      {sortedHolidays.length === 0 ? (
+      {filteredHolidays.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyText}>No holidays available</Text>
         </View>
       ) : (
         <FlatList
-          data={sortedHolidays}
+          data={filteredHolidays}
           scrollEnabled={false}
           renderItem={({ item }) => <HolidayItem item={item} />}
           keyExtractor={(item) => item.id}
