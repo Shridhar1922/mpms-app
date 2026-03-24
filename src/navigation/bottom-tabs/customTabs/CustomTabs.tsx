@@ -23,11 +23,9 @@ export const CustomBottomTabs = ({
   const [menuVisible, setMenuVisible] = useState(false);
   const [isEmployee, setIsEmployee] = useState(false);
   useEffect(() => {
-    console.log('CustomBottomTabs useEffect called');
     const loadUser = async () => {
       try {
         const json = await AsyncStorage.getItem(USER_INFO.USER);
-        console.log('json...........', json);
 
         if (json) {
           setIsEmployee(JSON.parse(json).roles[0].name === 'EMPLOYEE');
@@ -38,8 +36,6 @@ export const CustomBottomTabs = ({
     };
     loadUser();
   }, []);
-
-  console.log('CustomBottomTabs isEmployee', isEmployee);
 
   const TabList = isEmployee
     ? [

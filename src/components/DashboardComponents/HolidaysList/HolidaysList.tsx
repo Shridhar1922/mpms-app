@@ -43,26 +43,19 @@ export const HolidaysList: React.FC<HolidaysListProps> = ({ holidays }) => {
     return dateA - dateB;
   });
 
-  // Filter upcoming holidays (today and forward)
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const upcomingHolidays = sortedHolidays.filter((holiday) => {
-    return new Date(holiday.date) >= today;
-  });
-
   return (
     <View style={styles.card}>
       <View style={styles.header}>
-        <Text style={styles.cardTitle}>Upcoming Holidays</Text>
+        <Text style={styles.cardTitle}>All Holidays</Text>
       </View>
 
-      {upcomingHolidays.length === 0 ? (
+      {sortedHolidays.length === 0 ? (
         <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>No upcoming holidays</Text>
+          <Text style={styles.emptyText}>No holidays available</Text>
         </View>
       ) : (
         <FlatList
-          data={upcomingHolidays}
+          data={sortedHolidays}
           scrollEnabled={false}
           renderItem={({ item }) => <HolidayItem item={item} />}
           keyExtractor={(item) => item.id}

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { DrawerContentScrollView } from '@react-navigation/drawer';
+import { useDispatch } from 'react-redux';
 import { Screens } from '../../constants/Screens';
 // Employer screens
 import { DashboardScreen as EmployerDashboardScreen } from '../../screens/employer/dashboard/DashboardScreen';
@@ -17,8 +18,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { USER_INFO } from '../../constants/StaticData';
 import { UserType } from '../../constants/types';
 import { styles } from './CustomDrawerContent.styles';
+import { logout } from '../../redux/slices/authSlice';
+import { resetDashboard } from '../../redux/slices/dashboardSlice';
+import { authApi } from '../../redux/api/auth.api';
+import { dashboardApi } from '../../redux/api/dashboard.api';
 
 export const CustomDrawerContent = (props: any) => {
+  const dispatch = useDispatch();
   const [isEmployee, setIsEmployee] = useState<Boolean>(false);
   const [user, setUser] = useState<UserType | null>(null);
   // load user from AsyncStorage
@@ -27,8 +33,6 @@ export const CustomDrawerContent = (props: any) => {
       try {
         const json = await AsyncStorage.getItem(USER_INFO.USER);
         if (json) {
-          console.log('JSON.parse(json).roles.name', JSON.parse(json).roles[0].name);
-
           setIsEmployee(JSON.parse(json).roles[0].name === 'EMPLOYEE');
           setUser(JSON.parse(json));
         }
@@ -38,8 +42,6 @@ export const CustomDrawerContent = (props: any) => {
     };
     loadUser();
   }, []);
-
-  console.log('isEmployee..............', isEmployee);
 
   const TabList = isEmployee
     ? [
@@ -55,7 +57,19 @@ export const CustomDrawerContent = (props: any) => {
         { name: Screens.Main.SETTINGS, component: EmployerSettingsScreen, label: 'Settings' },
       ];
 
-  console.log('TabList', TabList);
+  const handleLogout = async () => {
+    // Clear AsyncStorage
+    await AsyncStorage.clear();
+    // Dispatch logout action to clear auth state
+    dispatch(logout());
+    // Reset dashboard state
+    dispatch(resetDashboard());
+    // Reset API cache
+    dispatch(authApi.util.resetApiState());
+    dispatch(dashboardApi.util.resetApiState());
+    // Navigate to login
+    props.navigation.navigate(Screens.Auth.LOGIN);
+  };
 
   return (
     <DrawerContentScrollView {...props}>
@@ -77,8 +91,7 @@ export const CustomDrawerContent = (props: any) => {
       <TouchableOpacity
         style={styles.drawerItem}
         onPress={async () => {
-          await AsyncStorage.clear();
-          props.navigation.navigate(Screens.Auth.LOGIN);
+          await handleLogout();
         }}
       >
         <Text style={[styles.drawerText, styles.colorRed]}>Logout</Text>

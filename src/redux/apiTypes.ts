@@ -10,3 +10,4 @@ export const API_ENDPOINT_REFRESH_TOKEN = '/api/auth/refresh';
 export const API_ENDPOINT_HOLIDAYS = '/api/holidays';
 export const API_ENDPOINT_CHECKIN = '/api/attendances';
 export const API_ENDPOINT_CHECKOUT = '/api/attendances';
+export const API_ENDPOINT_ATTENDANCE_BY_EMPLOYEE = '/api/attendances/get-all-for-employee-by';

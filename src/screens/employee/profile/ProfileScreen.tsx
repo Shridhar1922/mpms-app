@@ -1,12 +1,33 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { useDispatch } from 'react-redux';
 import { styles } from './ProfileScreen.styles';
 import { quickActions } from '../../../constants/ProfileData';
 import { Screens } from '../../../constants/Screens';
 import { CommonHeader } from '../../../components/commonHeader/CommonHeader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { logout } from '../../../redux/slices/authSlice';
+import { resetDashboard } from '../../../redux/slices/dashboardSlice';
+import { authApi } from '../../../redux/api/auth.api';
+import { dashboardApi } from '../../../redux/api/dashboard.api';
 
 export const ProfileScreen = ({ navigation }: { navigation: any }) => {
+  const dispatch = useDispatch();
+
+  const handleLogout = async () => {
+    // Clear AsyncStorage
+    await AsyncStorage.clear();
+    // Dispatch logout action to clear auth state
+    dispatch(logout());
+    // Reset dashboard state
+    dispatch(resetDashboard());
+    // Reset API cache
+    dispatch(authApi.util.resetApiState());
+    dispatch(dashboardApi.util.resetApiState());
+    // Navigate to login
+    navigation.navigate(Screens.Auth.LOGIN);
+  };
+
   return (
     <View style={styles.container}>
       {/* HEADER */}
@@ -109,8 +130,7 @@ export const ProfileScreen = ({ navigation }: { navigation: any }) => {
                   navigation.navigate(Screens.Main.EDIT_PROFILE);
                 }
                 if (item.title === 'Logout') {
-                  await AsyncStorage.clear();
-                  navigation.navigate(Screens.Auth.LOGIN);
+                  await handleLogout();
                 }
               }}
             >

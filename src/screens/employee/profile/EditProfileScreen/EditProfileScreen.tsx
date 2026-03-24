@@ -6,7 +6,6 @@ import {
   View,
   Text,
   TextInput,
-  StyleSheet,
   ScrollView,
   TouchableOpacity,
   Image,
@@ -70,7 +69,7 @@ const EditProfileScreen: React.FC<Partial<EditProfileScreenProps>> = (props) => 
 
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1 }}
+      style={styles.keyboardAvoidingView}
       behavior={RNPlatform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={80}
     >
@@ -128,21 +127,8 @@ const EditProfileScreen: React.FC<Partial<EditProfileScreenProps>> = (props) => 
                     visible={showDatePicker}
                     onRequestClose={() => setShowDatePicker(false)}
                   >
-                    <View
-                      style={{
-                        flex: 1,
-                        justifyContent: 'center',
-                        backgroundColor: 'rgba(0,0,0,0.3)',
-                      }}
-                    >
-                      <View
-                        style={{
-                          backgroundColor: '#fff',
-                          margin: 20,
-                          borderRadius: 10,
-                          padding: 16,
-                        }}
-                      >
+                    <View style={styles.datePickerModalOverlay}>
+                      <View style={styles.datePickerModalContent}>
                         <DateTimePicker
                           value={dob ? new Date(dob) : new Date()}
                           mode="date"
@@ -151,9 +137,9 @@ const EditProfileScreen: React.FC<Partial<EditProfileScreenProps>> = (props) => 
                         />
                         <Pressable
                           onPress={() => setShowDatePicker(false)}
-                          style={{ marginTop: 10, alignItems: 'center' }}
+                          style={styles.datePickerDoneButton}
                         >
-                          <Text style={{ color: '#007bff', fontWeight: 'bold' }}>Done</Text>
+                          <Text style={styles.datePickerDoneButtonText}>Done</Text>
                         </Pressable>
                       </View>
                     </View>

@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "android:dev": "ENVFILE=.env.development npx react-native run-android",
-    "build:android-dev": "cd android && ./gradlew assembleRelease",
-    "bundle:android-dev": "cd android && ./gradlew bundleRelease",
+    "build:android-dev": "ENVFILE=.env.development sh -c 'cd android && ./gradlew assembleRelease'",
+    "bundle:android-dev": "ENVFILE=.env.development sh -c 'cd android && ./gradlew bundleRelease'",
     "ios:dev": "ENVFILE=.env.development npx react-native run-ios",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",

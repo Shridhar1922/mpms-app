@@ -6,6 +6,7 @@ import {
   API_ENDPOINT_HOLIDAYS,
   API_ENDPOINT_CHECKIN,
   API_ENDPOINT_CHECKOUT,
+  API_ENDPOINT_ATTENDANCE_BY_EMPLOYEE,
 } from '../apiTypes';
 
 export const dashboardApi = createApi({
@@ -35,6 +36,14 @@ export const dashboardApi = createApi({
         method: 'GET',
       }),
     }),
+    getTodayAttendance: builder.query({
+      query: ({ employeeId, date }) => {
+        return {
+          url: `${API_ENDPOINT_CHECKIN}/${employeeId}?date=${date}`,
+          method: 'GET',
+        };
+      },
+    }),
     checkIn: builder.mutation({
       query: (data) => ({
         url: API_ENDPOINT_CHECKIN,
@@ -52,7 +61,20 @@ export const dashboardApi = createApi({
         },
       }),
     }),
+    getAttendancesByMonth: builder.query({
+      query: ({ employeeId, year, month, limit = 31 }) => ({
+        url: `${API_ENDPOINT_ATTENDANCE_BY_EMPLOYEE}/${employeeId}?year=${year}&month=${month}&limit=${limit}`,
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
-export const { useGetHolidaysQuery, useCheckInMutation, useCheckOutMutation } = dashboardApi;
+export const {
+  useGetHolidaysQuery,
+  useGetTodayAttendanceQuery,
+  useLazyGetTodayAttendanceQuery,
+  useCheckInMutation,
+  useCheckOutMutation,
+  useLazyGetAttendancesByMonthQuery,
+} = dashboardApi;

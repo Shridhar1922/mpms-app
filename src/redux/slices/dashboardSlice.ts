@@ -119,6 +119,7 @@ const dashboardSlice = createSlice({
     setError: (state, action: PayloadAction<string | null>) => {
       state.error = action.payload;
     },
+    resetDashboard: () => initialState,
   },
 });
 
@@ -131,6 +132,7 @@ export const {
   setHolidays,
   setLoading,
   setError,
+  resetDashboard,
 } = dashboardSlice.actions;
 
 export default dashboardSlice.reducer;
