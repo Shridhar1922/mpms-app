@@ -217,7 +217,6 @@ export const DashboardScreen = () => {
         };
       });
 
-      console.log('Transformed holidays:', transformedHolidays);
       dispatch(setHolidays(transformedHolidays));
     }
   }, [holidaysData, dispatch]);

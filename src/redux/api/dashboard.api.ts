@@ -7,6 +7,7 @@ import {
   API_ENDPOINT_CHECKIN,
   API_ENDPOINT_CHECKOUT,
   API_ENDPOINT_ATTENDANCE_BY_EMPLOYEE,
+  API_ENDPOINT_EMPLOYEES,
 } from '../apiTypes';
 
 export const dashboardApi = createApi({
@@ -67,10 +68,17 @@ export const dashboardApi = createApi({
         method: 'GET',
       }),
     }),
+    getEmployees: builder.query<any, void>({
+      query: () => ({
+        url: API_ENDPOINT_EMPLOYEES,
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
 export const {
+  useGetEmployeesQuery,
   useGetHolidaysQuery,
   useGetTodayAttendanceQuery,
   useLazyGetTodayAttendanceQuery,

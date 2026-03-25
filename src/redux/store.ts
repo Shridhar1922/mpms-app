@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import { authApi } from './api/auth.api';
 import dashboardReducer from './slices/dashboardSlice';
 import authReducer from './slices/authSlice';
+import employeesReducer from './slices/employeesSlice';
 import { dashboardApi } from './api/dashboard.api';
 
 export const store = configureStore({
@@ -10,6 +11,7 @@ export const store = configureStore({
     [authApi.reducerPath]: authApi.reducer,
     [dashboardApi.reducerPath]: dashboardApi.reducer,
     auth: authReducer,
+    employees: employeesReducer,
     dashboard: dashboardReducer,
   },
   // Adding the api middleware enables caching, invalidation, and polling

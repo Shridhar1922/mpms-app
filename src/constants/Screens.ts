@@ -20,5 +20,6 @@ export const Screens = {
     APPLY_LEAVE: 'ApplyLeaveScreen',
     ATTENDANCE_REQUEST: 'AttendanceRequestScreen',
     HOLIDAY: 'HolidayScreen',
+    MY_EMPLOYEES: 'MyEmployeesScreen',
   },
 } as const;

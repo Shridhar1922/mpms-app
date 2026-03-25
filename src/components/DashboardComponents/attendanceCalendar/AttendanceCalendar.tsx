@@ -70,9 +70,6 @@ export const AttendanceCalendar: React.FC<AttendanceCalendarProps> = ({
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [getAttendancesByMonth] = useLazyGetAttendancesByMonthQuery();
 
-  console.log('Rendering AttendanceCalendar with records:', checkInOutRecords);
-  console.log('Holidays:', holidays);
-  console.log('Today Date:', todayDate);
   const generateCalendarDays = (): CalendarDay[] => {
     const today = todayDate || new Date().toISOString().split('T')[0];
     const year = currentMonth.getFullYear();

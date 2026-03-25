@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { CommonStyles } from '../../../styles/commonStyles';
 import { CommonHeader } from '../../../components/commonHeader/CommonHeader';
@@ -9,15 +10,39 @@ import {
   NotificationItemType,
 } from '../../../components/dashboardComponents';
 import { moderateScale, verticalScale } from '../../../styles/responsiveStyles';
+import { useGetEmployeesQuery } from '../../../redux/api/dashboard.api';
+import { setEmployees } from '../../../redux/slices/employeesSlice';
+import { RootState } from '../../../redux/store';
 
 export const DashboardScreen = () => {
+  const dispatch = useDispatch();
+  const { data: employeesData, isLoading: employeesLoading } = useGetEmployeesQuery();
+  const employeeCount = useSelector((state: RootState) => state.employees.total);
   const [stats, setStats] = useState({ total: 0, present: 0, absent: 0 });
   const [notifications, setNotifications] = useState<NotificationItemType[]>([]);
 
   useEffect(() => {
-    // mock data for cards
-    setStats({ total: 120, present: 98, absent: 22 });
+    if (employeesData?.data?.items && !employeesLoading) {
+      const employeesList = Array.isArray(employeesData.data.items) ? employeesData.data.items : [];
+      dispatch(setEmployees(employeesList));
+      setStats((prevStats) => ({
+        ...prevStats,
+        total: employeesList.length,
+      }));
+    }
+  }, [employeesData, employeesLoading, dispatch]);
 
+  useEffect(() => {
+    // Update stats with employee count from Redux
+    if (employeeCount > 0) {
+      setStats((prevStats) => ({
+        ...prevStats,
+        total: employeeCount,
+      }));
+    }
+  }, [employeeCount]);
+
+  useEffect(() => {
     // mock notifications
     setNotifications([
       {
