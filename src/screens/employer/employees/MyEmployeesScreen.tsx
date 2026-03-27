@@ -1,14 +1,24 @@
 import { View, Text, FlatList, TouchableOpacity, Image, TextInput, ScrollView } from 'react-native';
 import React, { useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
 import { CommonStyles } from '../../../styles/commonStyles';
 import { CommonHeader } from '../../../components/commonHeader/CommonHeader';
 import { styles } from './MyEmployees.styles.ts';
-import { ChevronDownIcon, ChevronUpIcon } from './ExpandIcon';
+import AppButton from '../../../components/appButton/AppButton';
+import { Screens } from '../../../constants/Screens';
 import type { RootState } from '../../../redux/store';
 import type { Employee } from '../../../redux/slices/employeesSlice';
+import type { StackNavigationProp } from '@react-navigation/stack';
+import type { MainStackParamList } from '../../../constants/MainStackParamList';
+import AppIcon from '../../../components/appIcon/AppIcon';
+import { ChevronDownIcon, ChevronUpIcon } from '../../../assets/svgIcons/SvgIcon';
+import { Colors } from '../../../styles/colors.ts';
+
+type NavigationProp = StackNavigationProp<MainStackParamList>;
 
 export const MyEmployeesScreen = () => {
+  const navigation = useNavigation<NavigationProp>();
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
 
@@ -73,7 +83,11 @@ export const MyEmployeesScreen = () => {
               )}
             </View>
             <View style={styles.expandIconContainer}>
-              {expanded ? <ChevronUpIcon size={20} /> : <ChevronDownIcon size={20} />}
+              {expanded ? (
+                <AppIcon name={ChevronUpIcon} size={12} iconStyle={{ fill: Colors.black }} />
+              ) : (
+                <AppIcon name={ChevronDownIcon} size={12} iconStyle={{ fill: Colors.black }} />
+              )}
             </View>
           </View>
         </TouchableOpacity>
@@ -173,10 +187,18 @@ export const MyEmployeesScreen = () => {
           </View>
         )}
 
-        {/* Employee Count */}
-        <Text style={styles.employeeCount}>
-          {filteredEmployees.length} {filteredEmployees.length === 1 ? 'Employee' : 'Employees'}
-        </Text>
+        {/* Employee Count and Add Button */}
+        <View style={styles.headerRowContainer}>
+          <Text style={styles.employeeCount}>
+            {filteredEmployees.length} {filteredEmployees.length === 1 ? 'Employee' : 'Employees'}
+          </Text>
+
+          <AppButton
+            title="+ Add Employee"
+            onPress={() => navigation.navigate(Screens.Services.ADD_EMPLOYEE)}
+            variant="primary"
+          />
+        </View>
 
         {/* Employee List with Scroll */}
         <FlatList

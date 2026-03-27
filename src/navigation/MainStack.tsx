@@ -9,6 +9,7 @@ import EditProfileScreen from '../screens/employee/profile/EditProfileScreen/Edi
 import { AttendanceScreen } from '../screens/employee/attendance/AttendanceScreen';
 import { HolidayScreen } from '../screens/employee/holiday/HolidayScreen';
 import { MyEmployeesScreen } from '../screens/employer/employees/MyEmployeesScreen';
+import { AddEmployeeScreen } from '../screens/employer/employees/AddEmployeeScreen';
 
 const Stack = createStackNavigator();
 
@@ -31,6 +32,7 @@ const MainStack = () => (
       <Stack.Screen name={Screens.Services.ATTENDANCE_REQUEST} component={AttendanceScreen} />
       <Stack.Screen name={Screens.Services.HOLIDAY} component={HolidayScreen} />
       <Stack.Screen name={Screens.Services.MY_EMPLOYEES} component={MyEmployeesScreen} />
+      <Stack.Screen name={Screens.Services.ADD_EMPLOYEE} component={AddEmployeeScreen} />
     </Stack.Navigator>
   </NavigationContainer>
 );

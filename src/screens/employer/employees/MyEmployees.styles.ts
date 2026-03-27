@@ -8,10 +8,6 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.white,
     marginTop: moderateScale(20),
-    borderRadius: moderateScale(12),
-    elevation: 2,
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
     padding: moderateScale(15),
   },
   searchContainer: {
@@ -136,5 +132,11 @@ export const styles = StyleSheet.create({
     fontFamily: FontFamily.FONT_FAMILY_PRIMARY_REGULAR,
     fontSize: textScale(10),
     color: Colors.error,
+  },
+  headerRowContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: moderateScale(15),
   },
 });
