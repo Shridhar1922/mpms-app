@@ -7,6 +7,8 @@ import {
   API_ENDPOINT_CHECKIN,
   API_ENDPOINT_CHECKOUT,
   API_ENDPOINT_ATTENDANCE_BY_EMPLOYEE,
+  API_ENDPOINT_EMPLOYEES,
+  API_ENDPOINT_EMPLOYERS,
 } from '../apiTypes';
 
 export const dashboardApi = createApi({
@@ -14,8 +16,16 @@ export const dashboardApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: BASE_URL,
     prepareHeaders: async (headers) => {
-      headers.set('Accept', 'application/json');
-      headers.set('Content-Type', 'application/json');
+      // Don't set Content-Type for FormData requests
+      const isFormData = headers.get('x-is-formdata');
+      if (!isFormData) {
+        headers.set('Accept', 'application/json');
+        headers.set('Content-Type', 'application/json');
+      } else {
+        headers.delete('x-is-formdata');
+        headers.set('Accept', 'application/json');
+        // Let the browser set Content-Type with boundary for FormData
+      }
 
       try {
         const token = await AsyncStorage.getItem(USER_INFO.TOKEN);

@@ -33,3 +33,11 @@ export const INFO_ICON = `
   />
 </svg>
 `;
+
+export const ChevronUpIcon = `<<svg width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M5.65387 1.90735e-05L11.3076 5.65377L10.2539 6.70752L5.65387 2.10752L1.05387 6.70752L0.000116348 5.65377L5.65387 1.90735e-05Z" fill="currentColor"/>
+</svg>`;
+
+export const ChevronDownIcon = `<svg width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M6 7L0 1.0997L1.11828 0L6 4.8006L10.8817 0L12 1.0997L6 7Z" fill="currentColor"/>
+</svg>`;

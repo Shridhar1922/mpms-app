@@ -10,7 +10,7 @@ import Images from '../../../constants/Images';
 import { styles } from './CustomTabs.styles';
 import { USER_INFO } from '../../../constants/StaticData';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { AddEmployeeScreen } from '../../../screens/employer/AddEmployee/AddEmployeeScreen';
 export const CustomBottomTabs = ({
   state,
   descriptors,
@@ -43,7 +43,11 @@ export const CustomBottomTabs = ({
         { name: Screens.Services.ATTENDANCE_REQUEST, component: '', label: 'Attendance Request' },
       ]
     : [
-        { name: Screens.Services.ADD_EMPLOYEE, component: '', label: 'Add Employee' },
+        {
+          name: Screens.Services.ADD_EMPLOYEE,
+          component: AddEmployeeScreen,
+          label: 'Add Employee',
+        },
         { name: Screens.Services.ADD_HOLIDAY, component: '', label: 'Add Holiday' },
       ];
 
@@ -113,7 +117,14 @@ export const CustomBottomTabs = ({
         >
           <View style={styles.modalMenu}>
             {TabList.map((item) => (
-              <TouchableOpacity key={item.name} style={styles.menuItem}>
+              <TouchableOpacity
+                key={item.name}
+                style={styles.menuItem}
+                onPress={() => {
+                  setMenuVisible(false);
+                  if (item.component) navigation.navigate(item.name);
+                }}
+              >
                 <Image source={Images.home} style={[styles.modalImg]} resizeMode="contain" />
                 <Text style={styles.menuText}>{item.label}</Text>
               </TouchableOpacity>

@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import { FontFamily, FontSize } from '../../../styles/typography';
 import { moderateScale, scale, textScale, verticalScale } from '../../../styles/responsiveStyles';
 import { Colors } from '../../../styles/colors';
@@ -27,20 +27,21 @@ export const styles = StyleSheet.create({
   },
   plusButton: {
     position: 'absolute',
-    bottom: scale(65),
-    alignSelf: 'center',
+    paddingTop: moderateScale(Platform.OS === 'ios' ? 0 : 0),
+    bottom: scale(55),
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignContent: 'center',
     backgroundColor: '#007AFF',
     width: scale(55),
     height: scale(55),
     borderRadius: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
     elevation: 5,
   },
 
   plusText: {
     fontFamily: FontFamily.FONT_FAMILY_PRIMARY_LIGHT,
-    fontSize: textScale(25),
+    fontSize: textScale(30),
     color: Colors.white,
   },
 

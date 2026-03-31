@@ -5,10 +5,10 @@ import { Colors } from '../../styles/colors';
 
 export const styles = StyleSheet.create({
   button: {
-    height: verticalScale(50),
     borderRadius: 8,
     marginVertical: verticalScale(10),
-    paddingHorizontal: moderateScale(20),
+    paddingHorizontal: moderateScale(10),
+    paddingVertical: verticalScale(10),
   },
   primaryButton: {
     backgroundColor: Colors.blue,
@@ -20,7 +20,7 @@ export const styles = StyleSheet.create({
   },
   text: {
     fontFamily: FontFamily.FONT_FAMILY_PRIMARY_SEMI_BOLD,
-    fontSize: FontSize.S_12,
+    fontSize: FontSize.S_10,
   },
   primaryText: {
     color: Colors.white,

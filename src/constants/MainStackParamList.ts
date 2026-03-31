@@ -22,6 +22,7 @@ export type MainStackParamList = {
   [Screens.Services.ADD_HOLIDAY]: undefined;
   [Screens.Services.APPLY_LEAVE]: undefined;
   [Screens.Services.ATTENDANCE_REQUEST]: undefined;
+  [Screens.Services.MY_EMPLOYEES]: undefined;
 };
 
 // This magic block makes useNavigation() work everywhere without extra imports

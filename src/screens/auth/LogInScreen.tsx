@@ -74,13 +74,23 @@ export const LogInScreen = () => {
         showToast('Log in successfully!', 'success');
         await AsyncStorage.setItem(USER_INFO.REFRESH, response.data.refreshToken);
         await AsyncStorage.setItem(USER_INFO.TOKEN, response.data.accessToken);
-        await AsyncStorage.setItem(
-          USER_INFO.USER,
-          JSON.stringify({ ...response.data.user, employeeId: response.data.employeeId })
-        );
+        if (response.data.employeeId) {
+          await AsyncStorage.setItem(
+            USER_INFO.USER,
+            JSON.stringify({ ...response.data.user, employeeId: response.data.employeeId })
+          );
+        } else {
+          await AsyncStorage.setItem(
+            USER_INFO.USER,
+            JSON.stringify({ ...response.data.user, employerId: response.data.employerId })
+          );
+        }
         dispatch(setCredentials({ user: response.data.user, token: response.data.accessToken }));
         setLoading(false);
-        navigation.navigate(Screens.Main.TABS, { screen: Screens.Main.DASHBOARD });
+        navigation.reset({
+          index: 0,
+          routes: [{ name: Screens.Main.TABS, params: { screen: Screens.Main.DASHBOARD } }],
+        });
       }
     } catch (e: any) {
       setLoading(false);

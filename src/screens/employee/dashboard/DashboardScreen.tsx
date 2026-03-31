@@ -217,7 +217,6 @@ export const DashboardScreen = () => {
         };
       });
 
-      console.log('Transformed holidays:', transformedHolidays);
       dispatch(setHolidays(transformedHolidays));
     }
   }, [holidaysData, dispatch]);
@@ -341,7 +340,7 @@ export const DashboardScreen = () => {
         {/* Announcements List */}
         {/* <AnnouncementsList announcements={announcements} /> */}
         {/* Upcoming Holidays */}
-        <HolidaysList holidays={holidays} />
+        <HolidaysList holidays={holidays} type="upcoming" />
       </ScrollView>
     </View>
   );
