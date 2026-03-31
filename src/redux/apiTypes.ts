@@ -12,3 +12,4 @@ export const API_ENDPOINT_CHECKIN = '/api/attendances';
 export const API_ENDPOINT_CHECKOUT = '/api/attendances';
 export const API_ENDPOINT_ATTENDANCE_BY_EMPLOYEE = '/api/attendances/get-all-for-employee-by';
 export const API_ENDPOINT_EMPLOYEES = '/api/employees';
+export const API_ENDPOINT_EMPLOYERS = '/api/employers';

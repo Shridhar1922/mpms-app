@@ -75,4 +75,32 @@ export const styles = StyleSheet.create({
   submitButton: {
     width: '45%',
   },
+
+  dateTimeLabel: {
+    fontSize: textScale(12),
+    fontFamily: FontFamily.FONT_FAMILY_PRIMARY_BOLD,
+    color: Colors.darkgray,
+    marginBottom: verticalScale(8),
+  },
+
+  dateTimeInput: {
+    borderWidth: 1,
+    borderColor: Colors.lightgray,
+    borderRadius: moderateScale(8),
+    paddingVertical: verticalScale(12),
+    paddingHorizontal: horizontalScale(12),
+    marginBottom: verticalScale(12),
+    backgroundColor: Colors.white,
+  },
+
+  dateTimeValue: {
+    fontSize: textScale(10),
+    fontFamily: FontFamily.FONT_FAMILY_PRIMARY_REGULAR,
+    color: Colors.black,
+    paddingTop: verticalScale(4),
+  },
+
+  placeholder: {
+    color: Colors.lightgray,
+  },
 });

@@ -10,7 +10,7 @@ import {
   NotificationItemType,
 } from '../../../components/dashboardComponents';
 import { moderateScale, verticalScale } from '../../../styles/responsiveStyles';
-import { useGetEmployeesQuery } from '../../../redux/api/dashboard.api';
+import { useGetEmployeesQuery } from '../../../redux/api/employees.api';
 import { setEmployees } from '../../../redux/slices/employeesSlice';
 import { RootState } from '../../../redux/store';
 

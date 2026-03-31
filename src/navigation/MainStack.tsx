@@ -9,7 +9,7 @@ import EditProfileScreen from '../screens/employee/profile/EditProfileScreen/Edi
 import { AttendanceScreen } from '../screens/employee/attendance/AttendanceScreen';
 import { HolidayScreen } from '../screens/employee/holiday/HolidayScreen';
 import { MyEmployeesScreen } from '../screens/employer/employees/MyEmployeesScreen';
-import { AddEmployeeScreen } from '../screens/employer/employees/AddEmployeeScreen';
+import { AddEmployeeScreen } from '../screens/employer/AddEmployee/AddEmployeeScreen';
 
 const Stack = createStackNavigator();
 
